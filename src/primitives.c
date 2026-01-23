@@ -12,7 +12,6 @@ void populate_verticies(Vertex *verts, int count, int *positions) {
     for(int i = 0; i < count; i++) {
         verts[i].x = positions[offset];
         verts[i].y = positions[offset+1];
-        verts[i].z = positions[offset+2];
-        offset += 3;
+        offset += 2;
     }
 }

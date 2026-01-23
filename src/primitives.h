@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 typedef struct Vertex {
-  uint32_t x, y, z;
+  uint32_t x, y;
 
 } Vertex;
 
