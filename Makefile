@@ -1,0 +1,2 @@
+compile:
+	g++ src/*.cpp
