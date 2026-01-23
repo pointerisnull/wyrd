@@ -1,2 +1,2 @@
 compile:
-	g++ src/*.cpp
+	gcc src/*.c

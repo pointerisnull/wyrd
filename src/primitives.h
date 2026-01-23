@@ -1,32 +1,37 @@
 #ifndef PRIMS_H
 #define PRIMS_H
 
+#include <stdint.h>
 
 typedef struct Vertex {
-  int x, y, z;
+  uint32_t x, y, z;
+
 } Vertex;
 
 typedef struct Line {
-  int start_vertex, end_vertex;
-  bool normal; //facing direction
-  bool is_portal;
-  int adjacent_sector;
+  Vertex *head;   //start vertex
+  Vertex *tail;   //end vertex
+  uint8_t normal; //facing direction
+  uint8_t is_portal;
+  uint16_t ceiling, floor;
+  uint32_t adjacent_sector;
 
 } Line;
 
-class Sector {
-  private:
-    int vertexc, linec;
-    int first_vert;
-    Vertex *verticies;
-    Line *lines;
+typedef struct Sector {
+  uint32_t vertexc, linec;
+  uint32_t first_vert, first_line;
 
-  public:
-    Sector(int vertexc, int *pos);
+} Sector;
 
-    int get_vertex_count();
-    Vertex *vertex_at(int x, int y);
+typedef struct Chunk {
+  uint32_t sectorc;
+  Sector *sectors;
 
-};
+} Chunk;
+
+// Vertex functions
+Vertex *create_verticies(int count);
+void populate_verticies(Vertex *verts, int count, int *positions);
 
 #endif
