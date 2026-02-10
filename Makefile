@@ -16,7 +16,7 @@ else
 endif
 
 CXX := gcc
-CXXFLAGS := -std=c99
+CXXFLAGS := -std=c11
 
 SRCS := src/main.c $(wildcard src/ui/*.c src/engine/*.c src/utils/*.c)
 OBJS := $(SRCS:.c=.o)

@@ -5,15 +5,15 @@
 #include <stdbool.h>
 
 typedef struct Engine {
-    uint64_t tick;
-    int tickrate; // ticks per second
-    int tick_delta; // ms
-    uint64_t last_tick_time;
-    uint64_t start_time;
-    
-    uint8_t is_running;
-    uint8_t paused;
-    uint8_t headless;
+	uint64_t tick;
+	int tickrate; // ticks per second
+	int tick_delta; // ms
+	uint64_t last_tick_time;
+	uint64_t start_time;
+	
+	uint8_t is_running;
+	uint8_t paused;
+	uint8_t headless;
 } Engine;
 
 Engine new_engine(int rate);
