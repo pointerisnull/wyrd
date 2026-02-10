@@ -5,6 +5,7 @@
 #define DEFAULT_HEIGHT  600
 
 #include <stdbool.h>
+
 #include <SDL2/SDL.h>
 
 typedef struct Window {

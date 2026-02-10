@@ -2,6 +2,10 @@
 #include "ui/window.h"
 #include <stdio.h>
 
+#if defined(_WIN32)
+  #include <SDL2/SDL.h>
+#endif
+
 int main(int argc, char **argv) {
   /*
   int count = 4;
