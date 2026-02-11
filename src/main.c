@@ -1,5 +1,6 @@
 #include "core/engine.h"
 #include "core/primitives.h"
+#include "core/flags.h"
 #include "utils/utils.h"
 #include "gui/window.h"
 #include <stdio.h>
@@ -9,6 +10,23 @@
 #endif
 
 int main(int argc, char **argv) {
+	uint64_t flags = 0;
+	print_bitfield(flags);
+
+	set_flag(&flags, 10);
+	set_flag(&flags, 20);
+	set_flag(&flags, 30);
+	set_flag(&flags, 40);
+	set_flag(&flags, 50);
+	toggle_flag(&flags, 60);
+	print_bitfield(flags);
+	clear_flag(&flags, 50);
+	toggle_flag(&flags, 60);
+	print_bitfield(flags);
+	toggle_flag(&flags, 60);
+	print_bitfield(flags);
+
+	/*
 	Engine engine = new_engine(20);
 	
 	start_engine(&engine);
@@ -25,6 +43,6 @@ int main(int argc, char **argv) {
 	printf("Time ellipsed: %.02f ms.\n", (float)(end_time - engine.start_time)/1000);
 	
 	printf("Engine shutting down after %ld ticks.\n", engine.tick);
-	
+	*/
 	return 0;
 }
