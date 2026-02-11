@@ -5,9 +5,7 @@
 #include <stdio.h>
 
 int main(int argc, char **argv) {
-	int rate = 20;
-	
-	Engine engine = new_engine(rate);
+	Engine engine = new_engine(20);
 	
 	start_engine(&engine);
 	

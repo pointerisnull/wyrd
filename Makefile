@@ -1,5 +1,6 @@
 ifeq ($(OS), Windows_NT)
-    EXEC := a.exe
+    # WINDOWS SETTINGS
+	EXEC := a.exe
     SDL_PATH :=C:/msys64/mingw64
     
     INCLUDES := -Isrc/glad/include -I$(SDL_PATH)/include/SDL2
