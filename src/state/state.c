@@ -7,7 +7,7 @@ State *new_state_list(int *map) {
 	return s;
 }
 
-void update_state(State *current, State new_flag) {
+void update_state(State *current, Flag new_flag) {
 	current->state_flag = new_flag;
 }
 
