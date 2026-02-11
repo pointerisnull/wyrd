@@ -5,20 +5,20 @@ ifeq ($(OS), Windows_NT)
     INCLUDES := -Isrc/glad/include -I$(SDL_PATH)/include/SDL2
     LIBS := -L$(SDL_PATH)/lib -lmingw32 -lSDL2main -lSDL2 -mconsole
     RM := del /q
-    CLEAN_PATH := src\main.o src\gui\*.o src\core\*.o src\utils\*.o $(EXEC)
+    CLEAN_PATH := src\main.o src\gui\*.o src\core\*.o src\utils\*.o src\state\*.o $(EXEC)
 else
     # LINUX SETTINGS
     EXEC := a.out
     INCLUDES := -Isrc/glad/include
     LIBS := -L/usr/local/lib -lSDL2 -lSDL2main -lm -lpthread -lrt
     RM := rm -f
-    CLEAN_PATH := src/main.o src/gui/*.o src/core/*.o src/utils/*.o $(EXEC)
+    CLEAN_PATH := src/main.o src/gui/*.o src/core/*.o src/utils/*.o src/state/*.o $(EXEC)
 endif
 
 CXX := gcc
-CXXFLAGS := -std=c11
+CXXFLAGS := -std=c99
 
-SRCS := src/main.c $(wildcard src/gui/*.c src/core/*.c src/utils/*.c)
+SRCS := src/main.c $(wildcard src/gui/*.c src/core/*.c src/utils/*.c src/state/*.c)
 OBJS := $(SRCS:.c=.o)
 
 %.o: %.c
