@@ -5,15 +5,15 @@
 #include <stdbool.h>
 
 typedef enum FlagType FlagType;
+typedef uint32_t flag_t;
 
 enum FlagType {
 	F_SYSTEM, F_POSITION, F_ENTITY, F_ENVIRONMENT
 };
 
-void print_bitfield(uint64_t bitfield);
-uint8_t get_flag(uint64_t bitfield, int index);
-void set_flag(uint64_t *bitfield, int index);
-void clear_flag(uint64_t *bitfield, int index);
-void toggle_flag(uint64_t *bitfield, int index);
+uint8_t get_flag(flag_t bitfield, int index);
+void set_flag(flag_t *bitfield, int index);
+void clear_flag(flag_t *bitfield, int index);
+void toggle_flag(flag_t *bitfield, int index);
 
 #endif
