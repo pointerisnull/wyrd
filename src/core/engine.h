@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 typedef struct Engine {
-	uint64_t tick;
+	int64_t tick;
 	int tickrate; // ticks per second
 	int tick_delta; // ms
 	uint64_t last_tick_time;
