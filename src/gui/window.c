@@ -12,10 +12,23 @@ bool init_window(Window *win, char *title, int width, int height) {
 		return false;
 	}
 	
+	// Version stuff
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	
+	// Coloring. Allocates AT LEAST N bits for each
+	int N = 8;
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, N);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, N);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, N);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, N);
+	
+	//SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 32);
+	// Allocates space for two windows. Renders one frame while the other is being drawn
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+
 	win->sdl_window = SDL_CreateWindow(
 		title,
 		SDL_WINDOWPOS_UNDEFINED,
@@ -30,7 +43,9 @@ bool init_window(Window *win, char *title, int width, int height) {
 		return false;
 	}
 	
+	// Create a new context for OpenGL
 	win->gl_context = SDL_GL_CreateContext(win->sdl_window);
+
 	if (!win->gl_context) {
 		printf("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -49,9 +64,11 @@ bool init_window(Window *win, char *title, int width, int height) {
 	return true;
 }
 
-void draw_frame(Window *win) {
-	//char *path = "./res/years.bmp";
+void swap_buffers(Window *win) {
+	SDL_GL_SwapWindow(win->sdl_window);
+}
 
+void draw_frame(Window *win) {
 	// Set background color
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -59,8 +76,9 @@ void draw_frame(Window *win) {
 	// Add 3D rendering code here
 	
 	// Swap the buffers
-	SDL_GL_SwapWindow(win->sdl_window);
+	swap_buffers(win);
 }
+
 
 void close_window(Window *win) {
 	SDL_GL_DeleteContext(win->gl_context);

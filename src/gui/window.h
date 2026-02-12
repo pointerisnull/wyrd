@@ -10,8 +10,6 @@
 
 typedef struct Window {
 	SDL_Window *sdl_window;
-	SDL_Surface *root_surface;
-	SDL_Surface *media_surface;
 	SDL_GLContext gl_context;
 
 	int width; 
