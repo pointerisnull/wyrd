@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../misc/bitset.h"
+#include "events.h"
+
 typedef struct Engine {
 	int64_t tick;
 	int tickrate; // ticks per second
@@ -14,6 +17,12 @@ typedef struct Engine {
 	uint8_t is_running;
 	uint8_t paused;
 	uint8_t headless;
+
+	bitset_t input;
+	bitset_t flags;
+	
+	EventManager *events;
+
 } Engine;
 
 Engine new_engine(int rate);

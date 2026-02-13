@@ -1,7 +1,8 @@
 #include "core/engine.h"
-#include "core/primitives.h"
-#include "core/bitset.h"
-#include "utils/utils.h"
+#include "core/events.h"
+#include "misc/bitset.h"
+#include "misc/utils.h"
+#include "misc/input_map.h"
 #include "gui/window.h"
 #include <stdio.h>
 
@@ -10,8 +11,12 @@
 #endif
 
 int main(int argc, char **argv) {
-	Engine engine = new_engine(20);
 	
+	EventManager event_manager;
+	clear_manager(&event_manager);
+
+	Engine engine = new_engine(20);
+	engine.events = &event_manager;
 	start_engine(&engine);
 	
 	Window win;
@@ -21,11 +26,25 @@ int main(int argc, char **argv) {
 	while(engine_running(&engine)) {
 		if(can_engine_tick(&engine)) {
 			tick_engine(&engine);
+				if (engine.tick % 10 == 0) {
+					Event new = new_event(E_INPUT, RELEASE);
+					queue_event(&event_manager, new);
+					Event newer = new_event(E_INPUT, JUMP);
+					queue_event(&event_manager, newer);
+					new = new_event(E_INPUT, 2);
+					queue_event(&event_manager, new);
+					new = new_event(E_INPUT, 2);
+					queue_event(&event_manager, new);
+					new = new_event(E_INPUT, 16);
+					queue_event(&event_manager, new);
+					print_queue(&event_manager);
+				}
 		}
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT)
 				kill_engine(&engine);
 		}
+
 		draw_frame(&win);
 	}
 

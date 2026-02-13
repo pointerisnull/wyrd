@@ -24,3 +24,14 @@ void clear_bit(bitset_t *bitset, int index) {
 void toggle_bit(bitset_t *bitset, int index) {
 	*bitset ^= ((bitset_t) 0x1 << index);
 }
+
+uint8_t count_bits(bitset_t b) {
+	// Kernighan's algorithem
+	// Counts how many bits are set
+	int i = 0;
+	while (b) {
+		b &= (b - 1);
+		i++;
+	}
+	return i;
+}
