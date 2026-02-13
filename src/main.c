@@ -26,21 +26,10 @@ int main(int argc, char **argv) {
 	while(engine_running(&engine)) {
 		if(can_engine_tick(&engine)) {
 			tick_engine(&engine);
-			if (engine.tick % 10 == 0) {
-				Event new = new_event(E_INPUT, I_FORWARD);
-				queue_event(&event_manager, new);
-				Event newer = new_event(E_INPUT, I_BACKWARD);
-				queue_event(&event_manager, newer);
-				new = new_event(E_INPUT, 2);
-				queue_event(&event_manager, new);
-				new = new_event(E_INPUT, 16);
-				queue_event(&event_manager, new);
-				
-			}
-			if (engine.tick == 50) {
-				Event e = new_event(E_SYSTEM, 77);
-				queue_event(&event_manager, e);
-			}
+			//if (engine.tick % 10 == 0) {
+				//Event new = new_event(E_INPUT, I_FORWARD);
+				//queue_event(&event_manager, new);
+			//}
 			if (engine.tick == 100) {
 				Event e = new_event(E_TERM, 0);
 				queue_event(&event_manager, e);
