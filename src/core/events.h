@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../misc/bitset.h"
+
 #define MAX_EVENTS 256
 
 typedef enum EventType EventType;
@@ -12,13 +14,23 @@ typedef struct Event Event;
 typedef struct EventManager EventManager;
 
 enum EventType {
-	E_TERM, E_NOOP, E_INPUT, E_SYSTEM, E_ENTITY_MOVE
+	E_TERM, E_NOOP, E_INPUT, E_SYSTEM, E_ENTITY
+};
+
+enum EventClass {
+    E_GENERIC, E_MOVE, E_SPAWN, E_KILL
 };
 
 struct Event {
-    uint16_t pid;
     uint8_t type;
-    uint16_t value;
+    bitset_t value;
+
+    // Entity things
+    uint8_t class;
+    int sender;
+    int reciever;
+    int argc;
+    char **argv;
 };
 
 struct EventManager {
@@ -26,11 +38,10 @@ struct EventManager {
     int eventc; // event count
 	int eventp; // event pointer (current index in buffer)
     // Events are added, first come first serve
-    // All events must be handled before the next tick
     Event buffer[MAX_EVENTS];
 };
 
-Event new_event(uint8_t type, uint16_t value);
+Event new_event(uint8_t type, bitset_t value);
 
 void queue_event(EventManager *em, Event e);
 Event next_event(EventManager *em);

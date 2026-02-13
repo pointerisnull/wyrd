@@ -1,13 +1,16 @@
 #include "events.h"
-#include "../misc/bitset.h"
 
 #include <stdio.h>
 
-Event new_event(uint8_t type, uint16_t value) {
+Event new_event(uint8_t type, bitset_t value) {
 	Event e;
-	e.pid = 0;
 	e.type = type;
 	e.value = value;
+
+	e.class = E_GENERIC;
+	e.sender = -1;
+	e.reciever = -1;
+	e.argc = 0;
 	return e;
 }
 
@@ -60,6 +63,7 @@ void clear_manager(EventManager *em) {
 }
 
 void print_queue(EventManager *em) {
+	printf("\nIndex\t| Type \t| Value \n");
 	for (int i=0; i < em->eventc; i++)
-		printf("%d:\tType: %d Value: %d\n", i, em->buffer[i].type, em->buffer[i].value);
+		printf("%d\t| %d\t| %d\n", i, em->buffer[i].type, em->buffer[i].value);
 }

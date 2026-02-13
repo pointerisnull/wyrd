@@ -18,37 +18,50 @@ int main(int argc, char **argv) {
 	Engine engine = new_engine(20);
 	engine.events = &event_manager;
 	start_engine(&engine);
-	
+	/*
 	Window win;
 	init_window(&win, "Wyrd", DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	SDL_Event e;
-
+	*/
 	while(engine_running(&engine)) {
 		if(can_engine_tick(&engine)) {
 			tick_engine(&engine);
-				if (engine.tick % 10 == 0) {
-					Event new = new_event(E_INPUT, RELEASE);
-					queue_event(&event_manager, new);
-					Event newer = new_event(E_INPUT, JUMP);
-					queue_event(&event_manager, newer);
-					new = new_event(E_INPUT, 2);
-					queue_event(&event_manager, new);
-					new = new_event(E_INPUT, 2);
-					queue_event(&event_manager, new);
-					new = new_event(E_INPUT, 16);
-					queue_event(&event_manager, new);
-					print_queue(&event_manager);
-				}
+			if (engine.tick % 10 == 0) {
+				Event new = new_event(E_INPUT, I_FORWARD);
+				queue_event(&event_manager, new);
+				Event newer = new_event(E_INPUT, I_BACKWARD);
+				queue_event(&event_manager, newer);
+				new = new_event(E_INPUT, 2);
+				queue_event(&event_manager, new);
+				new = new_event(E_INPUT, 16);
+				queue_event(&event_manager, new);
+				
+			}
+			if (engine.tick == 50) {
+				Event e = new_event(E_SYSTEM, 77);
+				queue_event(&event_manager, e);
+			}
+			if (engine.tick == 100) {
+				Event e = new_event(E_TERM, 0);
+				queue_event(&event_manager, e);
+
+			}
+			if (event_manager.eventc > 0) {
+				print_queue(&event_manager);
+				printf("Tick: %d\n", engine.tick);
+			}
 		}
+		/*
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT)
 				kill_engine(&engine);
 		}
 
 		draw_frame(&win);
+		*/
 	}
 
-	close_window(&win);
+	//close_window(&win);
 	
 	uint64_t end_time = current_time_ms();
 	

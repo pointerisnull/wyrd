@@ -21,6 +21,11 @@ Engine new_engine(int rate) {
 
 	e.input = 0;
 	e.flags = 0;
+
+	// Setup input masks
+	for (int i=0; i < I_ENUM_COUNT; i++) {
+		e.I_MASKS[i] = 0x1 << i;
+	}
 	
 	return e;
 }
@@ -67,8 +72,11 @@ void handle_event(Engine *e, Event ev) {
 			return;
 		case E_TERM:
 			kill_engine(e);
+			printf("Shutting down engine -> Tick: %d\n", e->tick);
+			return;
 		case E_INPUT:
 			e->input |= ev.value;
+			return;
 		default:
 			return;
 	}
@@ -87,11 +95,35 @@ void handle_events(Engine *e) {
 	
 }
 
+void execute_input(Engine *e, int val) {
+	switch (val) {
+		case I_FORWARD:
+			printf("Forward input detected!\n");
+			return;
+		case I_BACKWARD:
+			printf("Reverse input detected!\n");
+			return;
+		default:
+			printf("Input %d could not be determined.\n");
+			return;
+	}
+}
+
 void handle_input(Engine *e) {
-	int inputs = count_bits(e->input);
-	print_bitset(e->input);
-	if (inputs)
-		printf("%d Bits set as input!\n", inputs);
+	if (!e->input)
+		return;
+	
+	int inputs = e->input;
+	int inputc = count_bits(e->input);
+
+	int i = 0;
+	while (inputs) {
+		if (inputs & 0x1) {
+			execute_input(e, i);
+		}
+		inputs = inputs >> 1;
+		i++;
+	}
 
 	e->input = 0;
 }
