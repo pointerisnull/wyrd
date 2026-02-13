@@ -89,9 +89,10 @@ void handle_events(Engine *e) {
 
 void handle_input(Engine *e) {
 	int inputs = count_bits(e->input);
-	//print_bitset(e->input);
-	//if (inputs)
-	//	printf("%d Bits set as input!\n", inputs);
+	print_bitset(e->input);
+	if (inputs)
+		printf("%d Bits set as input!\n", inputs);
+
 	e->input = 0;
 }
 
