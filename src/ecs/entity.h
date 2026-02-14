@@ -4,14 +4,18 @@
 #include <stdint.h>
 
 #include "../misc/bitset.h"
+#include "../misc/math.h"
 
 typedef struct Entity Entity;
 typedef uint16_t eid_t;
-typedef enum EntityAttributes;
 
 struct Entity {
     eid_t eid;
-    float x, y, z;
+    Vec3 p;		// Position
+    Vec3 v;		// Velocity
+    Vec3 a;		// Acceleration
+    
+	Vec3 d;		// Direction
 
     bitset_t attributes;
 

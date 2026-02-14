@@ -8,8 +8,6 @@
 
 #define MAX_EVENTS 256
 
-typedef enum EventType;
-
 typedef struct Event Event;
 typedef struct EventManager EventManager;
 

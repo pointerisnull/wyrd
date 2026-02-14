@@ -18,11 +18,11 @@ int main(int argc, char **argv) {
 	Engine engine = new_engine(20);
 	engine.events = &event_manager;
 	start_engine(&engine);
-	/*
+	
 	Window win;
 	init_window(&win, "Wyrd", DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	SDL_Event e;
-	*/
+	
 	while(engine_running(&engine)) {
 		if(can_engine_tick(&engine)) {
 			tick_engine(&engine);
@@ -30,8 +30,9 @@ int main(int argc, char **argv) {
 				//Event new = new_event(E_INPUT, I_FORWARD);
 				//queue_event(&event_manager, new);
 			//}
+			/*
 			if (engine.tick == 100) {
-				Event e = new_event(E_TERM, 0);
+				Event e = new_event(E_TERM, 88);
 				queue_event(&event_manager, e);
 
 			}
@@ -39,18 +40,21 @@ int main(int argc, char **argv) {
 				print_queue(&event_manager);
 				printf("Tick: %d\n", engine.tick);
 			}
+			*/
 		}
-		/*
+		
 		while (SDL_PollEvent(&e) != 0) {
-			if (e.type == SDL_QUIT)
-				kill_engine(&engine);
+			if (e.type == SDL_QUIT) {
+				Event e = new_event(E_TERM, 88);
+				queue_event(&event_manager, e);
+			}
 		}
 
 		draw_frame(&win);
-		*/
+		
 	}
 
-	//close_window(&win);
+	close_window(&win);
 	
 	uint64_t end_time = current_time_ms();
 	
