@@ -11,23 +11,17 @@ typedef uint16_t eid_t;
 
 struct Entity {
     eid_t eid;
-    Vec3 p;		// Position
-    Vec3 v;		// Velocity
-    Vec3 a;		// Acceleration
-    
-	Vec3 d;		// Direction
-
     bitset_t attributes;
 
 };
 
 enum EntityAttributes {
     EA_STATIC,
+    EA_HAS_GRAVITY,
     EA_HAS_INVENTORY,
     EA_HAS_AGENT
 };
 
-Entity new_entity(int atrv[], int atrc);
-void spawn_entity(float x, float y, float z);
+Entity new_entity(eid_t id, int atrv[], int atrc);
 
 #endif

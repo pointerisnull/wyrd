@@ -72,7 +72,7 @@ void handle_event(Engine *e, Event ev) {
 			return;
 		case E_TERM:
 			kill_engine(e);
-			printf("Shutting down engine -> Tick: %d\n", e->tick);
+			printf("Shutting down engine -> Tick: %ld\n", e->tick);
 			return;
 		case E_INPUT:
 			e->input |= ev.value;
@@ -104,7 +104,7 @@ void execute_input(Engine *e, int val) {
 			printf("Reverse input detected!\n");
 			return;
 		default:
-			printf("Input %d could not be determined.\n");
+			printf("Input %d could not be determined.\n", val);
 			return;
 	}
 }
