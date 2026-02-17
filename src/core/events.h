@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "../misc/bitset.h"
+#include "../misc/math.h"
 
 #define MAX_EVENTS 256
 
@@ -26,6 +27,10 @@ struct Event {
     // Entity things
     int sender;
     int reciever;
+    Vec3 vec;
+    uint8_t arg;
+
+    // Extended functionality
     int argc;
     char **argv;
 };

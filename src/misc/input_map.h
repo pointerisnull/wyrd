@@ -22,19 +22,4 @@ enum input_t {
 	I_ENUM_COUNT // Keep last, used to create bitmasks for these enums
 };
 
-enum movement_t {
-	M_FORWARD,
-	M_BACKWARD,
-	M_STRAFE_LEFT,
-	M_STRAFE_RIGHT,
-	M_UP,
-	M_DOWN,
-	M_YAW,
-	M_PITCH,
-	M_ROLL,
-	M_JUMP,
-
-	M_ENUM_COUNT // Keep last, used to create bitmasks for these enums
-};
-
 #endif

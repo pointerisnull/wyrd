@@ -33,7 +33,7 @@ struct ECS {
 };
 
 void initialize_ecs(ECS *ecs, uint64_t *engine_ticker, int tickrate);
-void add_entity(ECS *ecs, bitset_t attributes);
+void add_entity(ECS *ecs, bitset_t attributes, Vec3 spawnpoint);
 void kill_entity(ECS *ecs, eid_t e);
 
 void move_entity(ECS *ecs, eid_t id, Vec3 pos);

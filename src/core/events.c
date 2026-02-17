@@ -9,6 +9,10 @@ Event new_event(uint8_t type, bitset_t value) {
 
 	e.sender = -1;
 	e.reciever = -1;
+
+	e.vec = (Vec3){0, 0, 0};
+	e.arg = 0;
+
 	e.argc = 0;
 	return e;
 }
