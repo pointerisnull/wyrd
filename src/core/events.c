@@ -7,7 +7,6 @@ Event new_event(uint8_t type, bitset_t value) {
 	e.type = type;
 	e.value = value;
 
-	e.class = E_GENERIC;
 	e.sender = -1;
 	e.reciever = -1;
 	e.argc = 0;

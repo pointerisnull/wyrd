@@ -5,8 +5,9 @@
 #include <stdbool.h>
 
 #include "../misc/bitset.h"
-#include "events.h"
 #include "../misc/input_map.h"
+#include "../ecs/ecs.h"
+#include "events.h"
 
 typedef struct Engine {
 	int64_t tick;
@@ -23,6 +24,7 @@ typedef struct Engine {
 	bitset_t flags;
 	
 	EventManager *events;
+	ECS ecs;
 
 	int I_MASKS[I_ENUM_COUNT];
 

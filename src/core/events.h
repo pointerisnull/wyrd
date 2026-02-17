@@ -24,7 +24,6 @@ struct Event {
     bitset_t value;
 
     // Entity things
-    uint8_t class;
     int sender;
     int reciever;
     int argc;

@@ -27,6 +27,8 @@ Engine new_engine(int rate) {
 		e.I_MASKS[i] = 0x1 << i;
 	}
 	
+	initialize_ecs(&e.ecs, &e.tick, e.tickrate);
+	
 	return e;
 }
 
@@ -74,8 +76,14 @@ void handle_event(Engine *e, Event ev) {
 			kill_engine(e);
 			printf("Shutting down engine -> Tick: %ld\n", e->tick);
 			return;
+		case E_SYSTEM:
+			// Handle system events here
+			return;
 		case E_INPUT:
 			e->input |= ev.value;
+			return;
+		case E_ENTITY:
+			handle_entity_event(&e->ecs, ev);
 			return;
 		default:
 			return;
@@ -85,7 +93,7 @@ void handle_event(Engine *e, Event ev) {
 void handle_events(Engine *e) {
 	if (e->events->eventc <= 0)
 		return;
-	
+	printf("Handling events for tick %ld\n",e->tick);
 	e->events->processing = 1;
 	for (int i = 0; i < e->events->eventc; i++) {
 		Event ev = next_event(e->events);

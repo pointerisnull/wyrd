@@ -16,6 +16,7 @@ struct Entity {
 };
 
 enum EntityAttributes {
+    EA_HAS_DRAG,
     EA_STATIC,
     EA_HAS_GRAVITY,
     EA_HAS_INVENTORY,
