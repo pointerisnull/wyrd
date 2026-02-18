@@ -17,37 +17,33 @@ int main(int argc, char **argv) {
 
 	Engine engine = new_engine(20);
 	engine.events = &event_manager;
-	start_engine(&engine);
+	
+	
 	Window win;
 	init_window(&win, "Wyrd", DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	win.ecs = &engine.ecs;
+	win.em = &event_manager;
+
+	Event ev = new_event(E_ENTITY, E_SPAWN);
+	queue_event(&event_manager, ev);
+	engine.ecs.position[0] = (Vec3){200.0f, 0.0f, 200.0f};
+
 	SDL_Event e;
-	
+	printf("Starting engine -> Tick: %ld\n", engine.tick);
+	start_engine(&engine);
 	while(engine_running(&engine)) {
 		if(can_engine_tick(&engine)) {
 			tick_engine(&engine);
 		}
-		if (engine.tick % 20 == 0) {
-			Event ev = new_event(E_ENTITY, E_KILL);
-			ev.reciever = 9;
-			queue_event(&event_manager, ev);	
-		}
-		Event ev = new_event(E_ENTITY, E_SPAWN);
-		queue_event(&event_manager, ev);	
-		while (SDL_PollEvent(&e) != 0) {
-			if (e.type == SDL_QUIT) {
-				Event e = new_event(E_TERM, 88);
-				queue_event(&event_manager, e);
-			}
-		}
 		draw_frame(&win);
 	}
-
-	close_window(&win);
 	
 	uint64_t end_time = current_time_ms();
-	
+	printf("User position: (%.02f, %.02f, %.02f)\n", engine.ecs.position[0].x, engine.ecs.position[0].y, engine.ecs.position[0].z);	
 	printf("Time ellipsed: %.02f seconds.\n", (float)(end_time - engine.start_time)/1000);
 	printf("Engine shutting down after %ld ticks.\n", engine.tick);
+	
+	close_window(&win);
 	
 	return 0;
 }

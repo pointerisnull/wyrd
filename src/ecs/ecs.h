@@ -21,19 +21,21 @@ struct ECS {
 	/* All entities will have positional components at least */
 	Vec3 position[MAX_ENTITIES];
 	Vec3 velocity[MAX_ENTITIES];
-	Vec3 acceleration[MAX_ENTITIES];
-	Vec3 direction[MAX_ENTITIES];
+	Vec3 acceleration[MAX_ENTITIES];	// Acceleration m/s^2
+	Vec3 direction[MAX_ENTITIES];		// Direction facing, radians
+	float speed[MAX_ENTITIES];		// How fast the entity can move, m/s
+	float rotspeed[MAX_ENTITIES];		// rotational speed, m/s
 	float drag[MAX_ENTITIES];
 	
 	/* Boolean Attributes */
 	uint8_t is_static[MAX_ENTITIES];
-	uint8_t has_gravity[MAX_ENTITIES];
+	uint8_t is_flying[MAX_ENTITIES];
 	uint8_t has_inventory[MAX_ENTITIES];
 	uint8_t has_agency[MAX_ENTITIES];
 };
 
 void initialize_ecs(ECS *ecs, uint64_t *engine_ticker, int tickrate);
-void add_entity(ECS *ecs, bitset_t attributes, Vec3 spawnpoint);
+eid_t add_entity(ECS *ecs, bitset_t attributes, Vec3 spawnpoint);
 void kill_entity(ECS *ecs, eid_t e);
 
 void move_entity(ECS *ecs, eid_t id, Vec3 pos);

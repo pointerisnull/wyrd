@@ -8,12 +8,25 @@
 
 #include <SDL2/SDL.h>
 
+#include "../ecs/ecs.h"
+#include "../core/events.h"
+
 typedef struct Window {
 	SDL_Window *sdl_window;
 	SDL_GLContext gl_context;
 
+	ECS *ecs;
+	EventManager *em;
+
 	int width; 
 	int height;
+
+	Event quit_event;
+	Event forward_event;
+	Event backward_event;
+	Event left_event;
+	Event right_event;
+	Event jump_event;
 
 } Window;
 

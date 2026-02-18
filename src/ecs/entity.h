@@ -8,7 +8,7 @@
 #include "../misc/math.h"
 
 typedef struct Entity Entity;
-typedef uint16_t eid_t;
+typedef int16_t eid_t;
 
 struct Entity {
     eid_t eid;
@@ -19,7 +19,7 @@ struct Entity {
 enum EntityAttributes {
     EA_HAS_DRAG,
     EA_STATIC,
-    EA_HAS_GRAVITY,
+    EA_IS_FLYING,
     EA_HAS_INVENTORY,
     EA_HAS_AGENT
 };
@@ -31,8 +31,10 @@ enum Movement {
 	M_STRAFE_RIGHT,
 	M_UP,
 	M_DOWN,
-	M_YAW,
-	M_PITCH,
+	M_YAW_LEFT,
+	M_YAW_RIGHT,
+	M_PITCH_UP,
+	M_PITCH_DOWN,
 	M_ROLL,
 	M_JUMP,
 

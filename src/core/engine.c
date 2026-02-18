@@ -12,7 +12,7 @@ Engine new_engine(int rate) {
 	e.tickrate = rate;
 	e.tick_delta = 1000/rate;
 	
-	e.start_time = current_time_ms();
+	e.init_time = current_time_ms();
 	e.last_tick_time = e.start_time;
 	
 	e.headless = true;
@@ -33,6 +33,7 @@ Engine new_engine(int rate) {
 }
 
 void start_engine(Engine *e) {
+	e->start_time = current_time_ms();
 	e->is_running = true;
 }
 
@@ -93,7 +94,7 @@ void handle_event(Engine *e, Event ev) {
 void handle_events(Engine *e) {
 	if (e->events->eventc <= 0)
 		return;
-	printf("Handling events for tick %ld\n",e->tick);
+	//printf("Handling events for tick %ld\n",e->tick);
 	e->events->processing = 1;
 	for (int i = 0; i < e->events->eventc; i++) {
 		Event ev = next_event(e->events);
@@ -104,12 +105,27 @@ void handle_events(Engine *e) {
 }
 
 void execute_input(Engine *e, int val) {
+	Event ev;
 	switch (val) {
 		case I_FORWARD:
-			printf("Forward input detected!\n");
+			//printf("Forward input detected!\n");
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_FORWARD);
+			queue_event(e->events, ev);
 			return;
 		case I_BACKWARD:
-			printf("Reverse input detected!\n");
+			//printf("Reverse input detected!\n");
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_BACKWARD);
+			queue_event(e->events, ev);
+			return;
+		case I_STRAFE_LEFT:
+			//printf("Strafe left input detected!\n");
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_STRAFE_LEFT);
+			queue_event(e->events, ev);
+			return;
+		case I_STRAFE_RIGHT:
+			//printf("Strafe right input detected!\n");	
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_STRAFE_RIGHT);
+			queue_event(e->events, ev);
 			return;
 		default:
 			printf("Input %d could not be determined.\n", val);
@@ -139,6 +155,9 @@ void handle_input(Engine *e) {
 void tick_engine(Engine *e) {
 	// Handle pending events
 	handle_events(e);
+
+	// Deal with entities
+	update_physics(&e->ecs);
 
 	// Engine input
 	handle_input(e);

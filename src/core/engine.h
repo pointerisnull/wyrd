@@ -14,6 +14,7 @@ typedef struct Engine {
 	int tickrate; // ticks per second
 	int tick_delta; // ms
 	uint64_t last_tick_time;
+	uint64_t init_time;
 	uint64_t start_time;
 	
 	uint8_t is_running;
