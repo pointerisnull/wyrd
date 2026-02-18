@@ -110,6 +110,6 @@ unsigned char default_cfworld[] = {
   0x1c, 0x00, 0x00, 0x00
 };
 
-unsigned int default_cfworld_len = 1264;
+int default_cfworld_len = 1264;
 
 #endif

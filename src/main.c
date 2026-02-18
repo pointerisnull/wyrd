@@ -10,8 +10,12 @@
   #include <SDL2/SDL.h>
 #endif
 
+#include "misc/file.h"
+
 int main(int argc, char **argv) {
-	
+	read_legacy_file("./wyd/indev.wyd");
+	//write_file("./wyd/indev.wyd");
+	/*
 	EventManager event_manager;
 	clear_manager(&event_manager);
 
@@ -40,6 +44,6 @@ int main(int argc, char **argv) {
 	printf("Engine shutting down after %ld ticks.\n", engine.tick);
 	
 	close_window(&win);
-	
+	*/
 	return 0;
 }
