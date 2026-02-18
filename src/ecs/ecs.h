@@ -9,6 +9,10 @@
 #define MAX_ENTITIES 1024
 #define SLOT_BITSET_ARR MAX_ENTITIES/(sizeof(bitset_t)*8)
 
+#define DEFAULT_SPEED 1.5f
+#define DEFAULT_ROTSPEED 2.0f
+#define DEFAULT_ENTITY_DRAG 0.75f
+
 typedef struct ECS ECS;
 
 struct ECS {
@@ -21,8 +25,7 @@ struct ECS {
 	/* All entities will have positional components at least */
 	Vec3 position[MAX_ENTITIES];
 	Vec3 velocity[MAX_ENTITIES];
-	Vec3 acceleration[MAX_ENTITIES];	// Acceleration m/s^2
-	Vec3 direction[MAX_ENTITIES];		// Direction facing, radians
+	Vec3 direction[MAX_ENTITIES];		// Normalized direction vector
 	float speed[MAX_ENTITIES];		// How fast the entity can move, m/s
 	float rotspeed[MAX_ENTITIES];		// rotational speed, m/s
 	float drag[MAX_ENTITIES];

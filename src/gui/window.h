@@ -26,6 +26,8 @@ typedef struct Window {
 	Event backward_event;
 	Event left_event;
 	Event right_event;
+	Event look_left_event;
+	Event look_right_event;
 	Event jump_event;
 
 } Window;

@@ -19,11 +19,10 @@ void initialize_ecs(ECS *ecs, uint64_t *engine_ticker, int tickrate) {
 	for (int i = 0; i < MAX_ENTITIES; i++) {
 		ecs->position[i] = (Vec3){0, 0, 0};
 		ecs->velocity[i] = (Vec3){0, 0, 0};
-		ecs->acceleration[i] = (Vec3){0, 0, 0};
 		ecs->direction[i] = (Vec3){0, 0, 0};
-		ecs->drag[i] = 0;
-		ecs->speed[i] = 1.5;
-		ecs->rotspeed[i] = 1.5;
+		ecs->drag[i] = DEFAULT_ENTITY_DRAG;
+		ecs->speed[i] = DEFAULT_SPEED;
+		ecs->rotspeed[i] = DEFAULT_ROTSPEED;
 
 		// By default, all attributes are false
 		ecs->is_static[i] = 0;
@@ -58,7 +57,6 @@ eid_t add_entity(ECS *ecs, bitset_t attributes, Vec3 spawnpoint) {
 			}
 		}
 		bitset_arr_index++;
-		return id;
 	}
 	printf("Added entity with ID: %d\n", id);
 	print_bitset(ecs->slots[bitset_arr_index-1]);
@@ -67,11 +65,13 @@ eid_t add_entity(ECS *ecs, bitset_t attributes, Vec3 spawnpoint) {
 	// Initialize entity positional components
 	ecs->position[id] = spawnpoint;
 	ecs->velocity[id] = (Vec3){0, 0, 0};
-	ecs->acceleration[id] = (Vec3){0, 0, 0};
 	ecs->direction[id] = (Vec3){0, 0, 0};
-	ecs->drag[id] = 0;
+	ecs->drag[id] = DEFAULT_ENTITY_DRAG;
+	ecs->speed[id] = DEFAULT_SPEED;
+	ecs->rotspeed[id] = DEFAULT_ROTSPEED;
 	// Finally, increment total entity count
 	ecs->entityc++;
+	return id;
 }
 
 void kill_entity(ECS *ecs, eid_t e) {
@@ -99,26 +99,11 @@ void update_physics(ECS *ecs) {
 	// PLEASE PLEASE PLEASE OPTIMIZE THIS
 	for (int i = 0; i < MAX_ENTITIES; i++) {
 		if (get_bit(ecs->slots[i/(sizeof(bitset_t)*8)], i%(sizeof(bitset_t)*8)) == 1) {
-			// Apply acceleration to velocity
-			if (abs_v3(ecs->acceleration[i]) > 0) {
-				ecs->velocity[i].x += ecs->acceleration[i].x;
-				ecs->velocity[i].y += ecs->acceleration[i].y;
-				ecs->velocity[i].z += ecs->acceleration[i].z;
-				ecs->acceleration[i].x = 0.0;
-				ecs->acceleration[i].y = 0.0;
-				ecs->acceleration[i].z = 0.0;
-			} else {
-				// Apply drag to velocity
-				ecs->velocity[i].x *= pow(ecs->drag[i], ecs->dt);
-				ecs->velocity[i].y *= pow(ecs->drag[i], ecs->dt);
-				ecs->velocity[i].z *= pow(ecs->drag[i], ecs->dt);
-			}
-			/*
-			// Apply drag to velocity
-			ecs->velocity[i].x *= pow(ecs->drag[i], ecs->dt);
-			ecs->velocity[i].y *= pow(ecs->drag[i], ecs->dt);
-			ecs->velocity[i].z *= pow(ecs->drag[i], ecs->dt);
-			*/
+			// Apply drag
+			ecs->velocity[i].x *= ecs->drag[i];
+			ecs->velocity[i].y *= ecs->drag[i];
+			ecs->velocity[i].z *= ecs->drag[i];
+			
 			// Apply velocity to position
 			ecs->position[i].x += ecs->velocity[i].x;
 			ecs->position[i].y += ecs->velocity[i].y;
@@ -126,9 +111,9 @@ void update_physics(ECS *ecs) {
 		}
 	}
 }
-
+// TODO
 void update_positions(ECS *ecs);
-
+// TODO
 void handle_collisions(ECS *ecs);
 
 void apply_movement(ECS *ecs, eid_t id, int direction) {
@@ -136,36 +121,42 @@ void apply_movement(ECS *ecs, eid_t id, int direction) {
 
 	switch(direction) {
 		case M_FORWARD:
-			ecs->acceleration[id].x = sin(ecs->direction[id].y)*magnitude;
-			ecs->acceleration[id].z = cos(ecs->direction[id].y)*magnitude;
+			ecs->velocity[id].x += sin(ecs->direction[id].z)*magnitude;
+			ecs->velocity[id].y += cos(ecs->direction[id].z)*magnitude;
 			if (ecs->is_flying[id])
-				ecs->acceleration[id].y = sin(ecs->direction[id].x)*magnitude;
+				ecs->velocity[id].z += sin(ecs->direction[id].x)*magnitude;
 			return;
 
 		case M_BACKWARD:
-			ecs->acceleration[id].x = -sin(ecs->direction[id].y)*magnitude;
-			ecs->acceleration[id].z = -cos(ecs->direction[id].y)*magnitude;
+			ecs->velocity[id].x -= sin(ecs->direction[id].z)*magnitude;
+			ecs->velocity[id].y -= cos(ecs->direction[id].z)*magnitude;
 			if (ecs->is_flying[id])
-				ecs->acceleration[id].y = -sin(ecs->direction[id].x)*magnitude;
+				ecs->velocity[id].z -= sin(ecs->direction[id].x)*magnitude;
 			return;
 		case M_STRAFE_LEFT:
 			// 1.5708f = PI/2
-			ecs->acceleration[id].x = sin(ecs->direction[id].y - 1.5708f)*magnitude;
-			ecs->acceleration[id].z = cos(ecs->direction[id].y - 1.5708f)*magnitude;
+			ecs->velocity[id].x -= sin(ecs->direction[id].z - 1.5708f)*magnitude;
+			ecs->velocity[id].y -= cos(ecs->direction[id].z - 1.5708f)*magnitude;
 			return;
 		case M_STRAFE_RIGHT:
-			ecs->acceleration[id].x = sin(ecs->direction[id].y + 1.5708f)*magnitude;
-			ecs->acceleration[id].z = cos(ecs->direction[id].y + 1.5708f)*magnitude;
+			ecs->velocity[id].x += sin(ecs->direction[id].z - 1.5708f)*magnitude;
+			ecs->velocity[id].y += cos(ecs->direction[id].z - 1.5708f)*magnitude;
 			return;
 		case M_UP:
 			return;
 		case M_DOWN:
 			return;
 		case M_YAW_LEFT: // looking left
-			ecs->direction[id].y -= ecs->rotspeed[id]*ecs->dt;
+			ecs->direction[id].z += ecs->rotspeed[id]*ecs->dt;
+			if (ecs->direction[id].z < 0) {
+				ecs->direction[id].z += 6.28319f; // 2*PI
+			}
 			return;
 		case M_YAW_RIGHT: // looking right
-			ecs->direction[id].y += ecs->rotspeed[id]*ecs->dt;
+			ecs->direction[id].z -= ecs->rotspeed[id]*ecs->dt;
+			if (ecs->direction[id].z > 6.28319f) {
+				ecs->direction[id].z -= 6.28319f; // 2*PI
+			}
 			return;
 		case M_PITCH_UP: // looking up
 			return;
@@ -174,8 +165,8 @@ void apply_movement(ECS *ecs, eid_t id, int direction) {
 		case M_ROLL: // rotating view 
 			return;
 		case M_JUMP:
-			if (ecs->velocity[id].y == 0) {
-				ecs->velocity[id].y = 5;
+			if (ecs->velocity[id].z == 0) {
+				ecs->velocity[id].z = 5;
 			}
 			return;
 		default:

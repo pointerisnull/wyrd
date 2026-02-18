@@ -3,6 +3,7 @@
 #include "../misc/input_map.h"
 
 #include <GL/gl.h>
+#include <math.h>
 
 unsigned int pixel_shader;
 unsigned int VAO, VBO;
@@ -152,6 +153,8 @@ bool init_window(Window *win, char *title, int width, int height) {
 	win->backward_event = new_event(E_INPUT, I_BACKWARD);
 	win->left_event = new_event(E_INPUT, I_STRAFE_LEFT);
 	win->right_event = new_event(E_INPUT, I_STRAFE_RIGHT);
+	win->look_left_event = new_event(E_INPUT, I_YAW_LEFT);
+	win->look_right_event = new_event(E_INPUT, I_YAW_RIGHT);
 	win->jump_event = new_event(E_INPUT, I_JUMP);
 
 	return true;
@@ -204,6 +207,12 @@ void handle_window_input(Window *win) {
 	
 	if (keystates[SDL_SCANCODE_D])
 	queue_event(win->em, win->right_event);
+
+	if (keystates[SDL_SCANCODE_H])
+	queue_event(win->em, win->look_left_event);
+
+	if (keystates[SDL_SCANCODE_L])
+	queue_event(win->em, win->look_right_event);
 	
 }
 
@@ -214,8 +223,15 @@ void draw_frame(Window *win) {
 	
 	// Add 3D rendering code here
   float x = win->ecs->position[0].x;
-	float y = win->ecs->position[0].z;
-	draw_pixel(x, y, win->width, win->height);
+	float y = win->ecs->position[0].y;
+	float theta = win->ecs->direction[0].z;
+	float tx = x + 3*sin(theta);
+	float ty = y + 3*cos(theta);
+	float zoom_factor = 8.0f;
+	draw_pixel(x*zoom_factor, y*zoom_factor, win->width, win->height);
+	draw_pixel(tx*zoom_factor, ty*zoom_factor, win->width, win->height);
+	draw_pixel(20*zoom_factor, 20*zoom_factor, win->width, win->height);
+	draw_pixel(20*zoom_factor, 30*zoom_factor, win->width, win->height);
 	// Swap the buffers
 	swap_buffers(win);
 	handle_window_input(win);
