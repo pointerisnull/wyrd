@@ -4,23 +4,25 @@
 #include <stdint.h>
 
 typedef struct Vertex {
-  int32_t x, y;
-
+  int32_t x, z;
+  int32_t yb, yt; //bottom, top
+  uint32_t id;
 } Vertex;
 
 typedef struct Line {
+  uint32_t id;
   Vertex *head;   //start vertex
   Vertex *tail;   //end vertex
   uint8_t normal; //facing direction
   uint8_t is_portal;
-  uint16_t ceiling, floor;
   uint32_t adjacent_sector;
 
 } Line;
 
 typedef struct Sector {
-  uint32_t vertexc, linec;
-  uint32_t first_vert, first_line;
+  uint32_t id;
+  uint32_t linec;
+  Line *first_line;
 
 } Sector;
 
