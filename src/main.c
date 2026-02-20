@@ -13,9 +13,9 @@
 #include "misc/file.h"
 
 int main(int argc, char **argv) {
-	read_legacy_file("./wyd/indev.wyd");
+	//read_legacy_file("./wyd/indev.wyd");
 	//write_file("./wyd/indev.wyd");
-	/*
+	
 	EventManager event_manager;
 	clear_manager(&event_manager);
 
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 	win.em = &event_manager;
 
 	Event ev = new_event(E_ENTITY, E_SPAWN);
-	ev.vec = (Vec3){50.0f, 50.0f, 0.0f};
+	ev.vec = (Vec3){25.0f, 0.0f, 25.0f};
 	queue_event(&event_manager, ev);
 	
 	start_engine(&engine);
@@ -44,6 +44,5 @@ int main(int argc, char **argv) {
 	printf("Engine shutting down after %ld ticks.\n", engine.tick);
 	
 	close_window(&win);
-	*/
 	return 0;
 }

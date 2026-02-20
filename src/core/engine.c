@@ -163,12 +163,13 @@ void tick_engine(Engine *e) {
 	// Handle pending events
 	handle_events(e);
 
-	// Deal with entities
-	update_physics(&e->ecs);
-
 	// Engine input
 	handle_input(e);
 	
+	// Deal with entities
+	update_physics(&e->ecs);
+
+
 	// Finally increment the tick counter
 	e->tick += 1;
 	e->last_tick_time = current_time_ms();

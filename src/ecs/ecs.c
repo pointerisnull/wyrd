@@ -19,7 +19,7 @@ void initialize_ecs(ECS *ecs, uint64_t *engine_ticker, int tickrate) {
 	for (int i = 0; i < MAX_ENTITIES; i++) {
 		ecs->position[i] = (Vec3){0, 0, 0};
 		ecs->velocity[i] = (Vec3){0, 0, 0};
-		ecs->direction[i] = (Vec3){0, 0, 0};
+		ecs->direction[i] = (Vec3){0, PI, 0};
 		ecs->drag[i] = DEFAULT_ENTITY_DRAG;
 		ecs->speed[i] = DEFAULT_SPEED;
 		ecs->rotspeed[i] = DEFAULT_ROTSPEED;
@@ -61,11 +61,11 @@ eid_t add_entity(ECS *ecs, bitset_t attributes, Vec3 spawnpoint) {
 	printf("Added entity with ID: %d\n", id);
 	print_bitset(ecs->slots[bitset_arr_index-1]);
 	//print_bitset((bitset_t)(ecs->slots[bitset_arr_index-1]>>32));
-	printf("Slot bitset index: %d of %d\n\n", bitset_arr_index, SLOT_BITSET_ARR);
+	printf("Slot bitset index: %d of %ld\n\n", bitset_arr_index, SLOT_BITSET_ARR);
 	// Initialize entity positional components
 	ecs->position[id] = spawnpoint;
 	ecs->velocity[id] = (Vec3){0, 0, 0};
-	ecs->direction[id] = (Vec3){0, 0, 0};
+	ecs->direction[id] = (Vec3){0, PI, 0};
 	ecs->drag[id] = DEFAULT_ENTITY_DRAG;
 	ecs->speed[id] = DEFAULT_SPEED;
 	ecs->rotspeed[id] = DEFAULT_ROTSPEED;
@@ -99,15 +99,16 @@ void update_physics(ECS *ecs) {
 	// PLEASE PLEASE PLEASE OPTIMIZE THIS
 	for (int i = 0; i < MAX_ENTITIES; i++) {
 		if (get_bit(ecs->slots[i/(sizeof(bitset_t)*8)], i%(sizeof(bitset_t)*8)) == 1) {
-			// Apply drag
-			ecs->velocity[i].x *= ecs->drag[i];
-			ecs->velocity[i].y *= ecs->drag[i];
-			ecs->velocity[i].z *= ecs->drag[i];
-			
 			// Apply velocity to position
 			ecs->position[i].x += ecs->velocity[i].x;
 			ecs->position[i].y += ecs->velocity[i].y;
 			ecs->position[i].z += ecs->velocity[i].z;
+			
+			// Apply drag
+			ecs->velocity[i].x *= ecs->drag[i];
+			ecs->velocity[i].y *= ecs->drag[i];
+			ecs->velocity[i].z *= ecs->drag[i];
+	
 		}
 	}
 }
@@ -121,41 +122,41 @@ void apply_movement(ECS *ecs, eid_t id, int direction) {
 
 	switch(direction) {
 		case M_FORWARD:
-			ecs->velocity[id].x += sin(ecs->direction[id].z)*magnitude;
-			ecs->velocity[id].y += cos(ecs->direction[id].z)*magnitude;
+			ecs->velocity[id].x += sin(ecs->direction[id].y)*magnitude;
+			ecs->velocity[id].z += cos(ecs->direction[id].y)*magnitude;
 			if (ecs->is_flying[id])
-				ecs->velocity[id].z += sin(ecs->direction[id].x)*magnitude;
+				ecs->velocity[id].y += sin(ecs->direction[id].x)*magnitude;
 			return;
 
 		case M_BACKWARD:
-			ecs->velocity[id].x -= sin(ecs->direction[id].z)*magnitude;
-			ecs->velocity[id].y -= cos(ecs->direction[id].z)*magnitude;
+			ecs->velocity[id].x -= sin(ecs->direction[id].y)*magnitude;
+			ecs->velocity[id].z -= cos(ecs->direction[id].y)*magnitude;
 			if (ecs->is_flying[id])
-				ecs->velocity[id].z -= sin(ecs->direction[id].x)*magnitude;
+				ecs->velocity[id].y -= sin(ecs->direction[id].x)*magnitude;
 			return;
 		case M_STRAFE_LEFT:
 			// 1.5708f = PI/2
-			ecs->velocity[id].x -= sin(ecs->direction[id].z - 1.5708f)*magnitude;
-			ecs->velocity[id].y -= cos(ecs->direction[id].z - 1.5708f)*magnitude;
+			ecs->velocity[id].x -= sin(ecs->direction[id].y - 1.5708f)*magnitude;
+			ecs->velocity[id].z -= cos(ecs->direction[id].y - 1.5708f)*magnitude;
 			return;
 		case M_STRAFE_RIGHT:
-			ecs->velocity[id].x += sin(ecs->direction[id].z - 1.5708f)*magnitude;
-			ecs->velocity[id].y += cos(ecs->direction[id].z - 1.5708f)*magnitude;
+			ecs->velocity[id].x += sin(ecs->direction[id].y - 1.5708f)*magnitude;
+			ecs->velocity[id].z += cos(ecs->direction[id].y - 1.5708f)*magnitude;
 			return;
 		case M_UP:
 			return;
 		case M_DOWN:
 			return;
 		case M_YAW_LEFT: // looking left
-			ecs->direction[id].z += ecs->rotspeed[id]*ecs->dt;
-			if (ecs->direction[id].z < 0) {
-				ecs->direction[id].z += 6.28319f; // 2*PI
+			ecs->direction[id].y += ecs->rotspeed[id]*ecs->dt;
+			if (ecs->direction[id].y < 0) {
+				ecs->direction[id].y += 6.28319f; // 2*PI
 			}
 			return;
 		case M_YAW_RIGHT: // looking right
-			ecs->direction[id].z -= ecs->rotspeed[id]*ecs->dt;
-			if (ecs->direction[id].z > 6.28319f) {
-				ecs->direction[id].z -= 6.28319f; // 2*PI
+			ecs->direction[id].y -= ecs->rotspeed[id]*ecs->dt;
+			if (ecs->direction[id].y > 6.28319f) {
+				ecs->direction[id].y -= 6.28319f; // 2*PI
 			}
 			return;
 		case M_PITCH_UP: // looking up
@@ -165,8 +166,8 @@ void apply_movement(ECS *ecs, eid_t id, int direction) {
 		case M_ROLL: // rotating view 
 			return;
 		case M_JUMP:
-			if (ecs->velocity[id].z == 0) {
-				ecs->velocity[id].z = 5;
+			if (ecs->velocity[id].y == 0) {
+				ecs->velocity[id].y = 5;
 			}
 			return;
 		default:

@@ -1,94 +1,15 @@
 #include "window.h"
+#include "render.h"
 #include "glad/glad.h"
 #include "../misc/input_map.h"
 
 #include <GL/gl.h>
 #include <math.h>
 
-unsigned int pixel_shader;
-unsigned int VAO, VBO;
-
-void init_pixel() {
-	const char* vertexShaderSource = "#version 330 core\n"
-		"layout (location = 0) in vec2 aPos;\n"
-		"uniform vec2 u_resolution;\n" // Window width/height
-		"uniform vec2 u_position;\n"   // Target pixel (x, y)
-		"void main() {\n"
-		"   // Convert pixel coordinates to NDC (-1 to 1)\n"
-		"   vec2 ndc = (u_position / u_resolution) * 2.0 - 1.0;\n"
-		"   // Flip Y because screen pixels start top-left, OpenGL starts bottom-left\n"
-		"   gl_Position = vec4(ndc.x, -ndc.y, 0.0, 1.0);\n"
-		"}\0";
-
-  const char* fragmentShaderSource = "#version 330 core\n"
-      "out vec4 FragColor;\n"
-      "void main() { FragColor = vec4(1.0, 0.0, 0.0, 1.0); }\0"; // Red color
-
-  int success;
-  char infoLog[512];
-
-  // Compile Vertex Shader
-  unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-  glCompileShader(vertexShader);
-  
-  // Check for errors
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-      glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-      printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
-  }
-
-  // Compile Fragment Shader
-  unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-  glCompileShader(fragmentShader);
-  
-  // Check for errors
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-      glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-      printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
-  }
-
-  // Link Shaders into Program
-  pixel_shader = glCreateProgram();
-  glAttachShader(pixel_shader, vertexShader);
-  glAttachShader(pixel_shader, fragmentShader);
-  glLinkProgram(pixel_shader);
-  
-  // Check for linking errors
-  glGetProgramiv(pixel_shader, GL_LINK_STATUS, &success);
-  if (!success) {
-      glGetProgramInfoLog(pixel_shader, 512, NULL, infoLog);
-      printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
-  }
-
-  // Cleanup individual shaders
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
-
-  // 5. Setup Vertex Data (The Dot)
-  float vertices[] = { 0.0f, 0.0f }; // NDC Center
-
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-
-  glBindVertexArray(VAO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  // Position attribute
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0); 
-  glBindVertexArray(0); 
-}
-
 bool init_window(Window *win, char *title, int width, int height) {
 	win->width = width;
 	win->height = height;
+	win->mode = WM_3D;
 	
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -134,10 +55,9 @@ bool init_window(Window *win, char *title, int width, int height) {
 		return false;
 	}
 	
-	// Enable VSync
-	if (SDL_GL_SetSwapInterval(1) < 0) {
-		printf("Warning: Unable to set VSync! SDL_Error: %s\n", SDL_GetError());
-	}
+	// VSync for OpenGL
+	bool enable_vsync = true;
+	SDL_GL_SetSwapInterval(enable_vsync);
 	
 	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
 		printf("Failed to initialize GLAD\n");
@@ -145,7 +65,7 @@ bool init_window(Window *win, char *title, int width, int height) {
 	}
 
 	// Init shaders
-	init_pixel();
+	init_gl();
 
 	// Window events
 	win->quit_event = new_event(E_TERM, 0);
@@ -164,55 +84,43 @@ void swap_buffers(Window *win) {
 	SDL_GL_SwapWindow(win->sdl_window);
 }
 
-void draw_pixel(int x, int y, int width, int height) {
-    glUseProgram(pixel_shader);
-
-    // Get uniform locations
-    int resLoc = glGetUniformLocation(pixel_shader, "u_resolution");
-    int posLoc = glGetUniformLocation(pixel_shader, "u_position");
-
-    // Send the window size and the target pixel to the shader
-    glUniform2f(resLoc, (float)width, (float)height);
-    glUniform2f(posLoc, (float)x, (float)y);
-
-    // Draw the point
-    glPointSize(5.0f); // Set dot size
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_POINTS, 0, 1);
-    glBindVertexArray(0);
-}
-
 void handle_window_input(Window *win) {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 	  switch (event.type) {
 	    case SDL_QUIT:
-				queue_event(win->em, win->quit_event);
-	      break;
+			queue_event(win->em, win->quit_event);
+			break;
+		case SDL_KEYUP: // Handle discrete key presses here
+			if (event.key.keysym.sym == 110) { // N key
+				win->mode = (win->mode == WM_2D) ? WM_3D : WM_2D;
+			}
+			break;
 		}
 	}
+	// Handle non-discrete key inputs down here
 	const Uint8* keystates = SDL_GetKeyboardState(NULL);
 	
 	if (keystates[SDL_SCANCODE_SPACE])
-	queue_event(win->em, win->jump_event);
+		queue_event(win->em, win->jump_event);
 	 
 	if (keystates[SDL_SCANCODE_W])
-	queue_event(win->em, win->forward_event);
+		queue_event(win->em, win->forward_event);
 	
 	if (keystates[SDL_SCANCODE_S])
-	queue_event(win->em, win->backward_event);
+		queue_event(win->em, win->backward_event);
 	
 	if (keystates[SDL_SCANCODE_A])
-	queue_event(win->em, win->left_event);
+		queue_event(win->em, win->left_event);
 	
 	if (keystates[SDL_SCANCODE_D])
-	queue_event(win->em, win->right_event);
+		queue_event(win->em, win->right_event);
 
 	if (keystates[SDL_SCANCODE_H])
-	queue_event(win->em, win->look_left_event);
+		queue_event(win->em, win->look_left_event);
 
 	if (keystates[SDL_SCANCODE_L])
-	queue_event(win->em, win->look_right_event);
+		queue_event(win->em, win->look_right_event);
 	
 }
 
@@ -222,16 +130,21 @@ void draw_frame(Window *win) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Add 3D rendering code here
-  float x = win->ecs->position[0].x;
-	float y = win->ecs->position[0].y;
-	float theta = win->ecs->direction[0].z;
-	float tx = x + 3*sin(theta);
-	float ty = y + 3*cos(theta);
-	float zoom_factor = 8.0f;
-	draw_pixel(x*zoom_factor, y*zoom_factor, win->width, win->height);
-	draw_pixel(tx*zoom_factor, ty*zoom_factor, win->width, win->height);
-	draw_pixel(20*zoom_factor, 20*zoom_factor, win->width, win->height);
-	draw_pixel(20*zoom_factor, 30*zoom_factor, win->width, win->height);
+	if (win->mode == WM_2D) {
+		// screen x,y -> world space x,z
+		float zoom_factor = 8.0f;
+		float x = win->ecs->position[0].x;
+		float y = win->ecs->position[0].z;
+		float theta = win->ecs->direction[0].y;
+		float tx = x + 3*sin(theta);
+		float ty = y + 3*cos(theta);
+		draw_pixel(x*zoom_factor, y*zoom_factor, win->width, win->height);
+		draw_pixel(tx*zoom_factor, ty*zoom_factor, win->width, win->height);
+		draw_pixel(20*zoom_factor, 20*zoom_factor, win->width, win->height);
+		draw_pixel(20*zoom_factor, 30*zoom_factor, win->width, win->height);
+	} else if (win->mode == WM_3D) {
+		render_3D(win);
+	}
 	// Swap the buffers
 	swap_buffers(win);
 	handle_window_input(win);

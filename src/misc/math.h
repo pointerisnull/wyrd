@@ -1,6 +1,8 @@
 #ifndef MISC_MATH_H
 #define MISC_MATH_H
 
+#define PI 3.14159265359
+
 typedef struct Vec3 Vec3;
 typedef struct Vec4 Vec4;
 typedef struct Mat3 Mat3;

@@ -9,7 +9,7 @@ ifeq ($(OS), Windows_NT)
     CLEAN_PATH := src\lib\glad\src\glad.o src\main.o src\ecs\*.o src\gui\*.o src\core\*.o src\misc\*.o src\state\*.o $(EXEC)
 else
     # LINUX SETTINGS
-    EXEC := wyrd.bin
+    EXEC := a.out
 
     INCLUDES := -Isrc/lib/glad/include
     LIBS := -L/usr/local/lib -lSDL2 -lSDL2main -lm -lpthread -lrt -ldl

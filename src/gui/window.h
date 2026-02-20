@@ -21,6 +21,8 @@ typedef struct Window {
 	int width; 
 	int height;
 
+	int mode;
+
 	Event quit_event;
 	Event forward_event;
 	Event backward_event;
@@ -31,6 +33,12 @@ typedef struct Window {
 	Event jump_event;
 
 } Window;
+
+enum WindowMode {
+	WM_2D,
+	WM_3D,
+	WM_MENU
+};
 
 bool init_window(Window *win, char *title, int width, int height);
 void draw_frame(Window *win);
