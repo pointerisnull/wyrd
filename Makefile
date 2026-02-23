@@ -11,8 +11,8 @@ else
     # LINUX SETTINGS
     EXEC := a.out
 
-    INCLUDES := -Isrc/lib/glad/include
-    LIBS := -L/usr/local/lib -lSDL2 -lSDL2main -lm -lpthread -lrt -ldl
+    INCLUDES := -I src/lib/include/
+    LIBS := -L src/lib -lraylib -lm
     RM := rm -f
     CLEAN_PATH := src/lib/glad/src/glad.o src/main.o src/ecs/*.o src/gui/*.o src/core/*.o src/misc/*.o src/state/*.o $(EXEC)
 endif
@@ -20,9 +20,7 @@ endif
 CXX := gcc
 CXXFLAGS := -std=c99
 
-GLAD_PATH := src/lib/glad/src/glad.c
-
-SRCS := src/main.c $(wildcard src/gui/*.c src/core/*.c src/misc/*.c src/state/*.c src/ecs/*.c) $(GLAD_PATH)
+SRCS := src/main.c $(wildcard src/gui/*.c src/core/*.c src/misc/*.c src/state/*.c src/ecs/*.c)
 OBJS := $(SRCS:.c=.o)
 
 %.o: %.c

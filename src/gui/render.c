@@ -1,9 +1,8 @@
 #include "window.h"
 #include "shaders.h"
-#include "glad/glad.h"
 #include "../misc/math.h"
+#include "raylib.h"
 
-#include <GL/gl.h>
 #include <math.h>
 #include <stdio.h>
 
@@ -16,13 +15,16 @@ unsigned int l_VAO, l_VBO;
 unsigned int VAO, VBO;
 
 void render_3D(Window *win) {
+	/*
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glUseProgram(shader_3D);
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+	*/
 }
 
 void init_3D() {
+	/*
 	glGenBuffers(1, &VBO);  
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -65,101 +67,85 @@ void init_3D() {
 	glDeleteShader(v_shader);
 	glDeleteShader(f_shader);
 
-	/*
-	// VBO
-	// Link vertex attribs
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	// copy our vertices array in a buffer for OpenGL to use
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	// then set the vertex attributes pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);  
-	// use our shader program when we want to render an object
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	*/
 	glGenVertexArrays(1, &VAO); 
 	// VAO
-	// 1. bind Vertex Array Object
 	glBindVertexArray(VAO);
-	// 2. copy our vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	// 3. then set our vertex attributes pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);  
-	// 4. draw the object
-
+	*/
 }
 
 void init_pixel() {
-  int success;
-  char infoLog[512];
+	/*
+	int success;
+	char infoLog[512];
+	
+	// Compile Vertex Shader
+	unsigned int p_vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(p_vertex_shader, 1, &pixel_vertex_shader, NULL);
+	glCompileShader(p_vertex_shader);
+	
+	// Check for errors
+	glGetShaderiv(p_vertex_shader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+	    glGetShaderInfoLog(p_vertex_shader, 512, NULL, infoLog);
+	    printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
+	}
+	
+	// Compile Fragment Shader
+	unsigned int p_fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(p_fragment_shader, 1, &pixel_fragment_shader, NULL);
+	glCompileShader(p_fragment_shader);
+	
+	// Check for errors
+	glGetShaderiv(p_fragment_shader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+	    glGetShaderInfoLog(p_fragment_shader, 512, NULL, infoLog);
+	    printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
+	}
 
-  // Compile Vertex Shader
-  unsigned int p_vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(p_vertex_shader, 1, &pixel_vertex_shader, NULL);
-  glCompileShader(p_vertex_shader);
-  
-  // Check for errors
-  glGetShaderiv(p_vertex_shader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-      glGetShaderInfoLog(p_vertex_shader, 512, NULL, infoLog);
-      printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
-  }
+	// Link Shaders into Program
+	pixel_shader = glCreateProgram();
+	glAttachShader(pixel_shader, p_vertex_shader);
+	glAttachShader(pixel_shader, p_fragment_shader);
+	glLinkProgram(pixel_shader);
+	
+	// Check for linking errors
+	glGetProgramiv(pixel_shader, GL_LINK_STATUS, &success);
+	if (!success) {
+	    glGetProgramInfoLog(pixel_shader, 512, NULL, infoLog);
+	    printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
+	  }
+	
+	  // Cleanup individual shaders
+	  glDeleteShader(p_vertex_shader);
+	  glDeleteShader(p_fragment_shader);
+	
+	  // 5. Setup Vertex Data (The Dot)
+	  float vertices[] = { 0.0f, 0.0f }; // NDC Center
+	
+	  glGenVertexArrays(1, &p_VAO);
+	  glGenBuffers(1, &p_VBO);
+	
+	  glBindVertexArray(p_VAO);
+	  glBindBuffer(GL_ARRAY_BUFFER, p_VBO);
+	  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	
+	  // Position attribute
+	  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	  glEnableVertexAttribArray(0);
+	
+	  glBindBuffer(GL_ARRAY_BUFFER, 0); 
+	  glBindVertexArray(0); 
 
-  // Compile Fragment Shader
-  unsigned int p_fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(p_fragment_shader, 1, &pixel_fragment_shader, NULL);
-  glCompileShader(p_fragment_shader);
-  
-  // Check for errors
-  glGetShaderiv(p_fragment_shader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-      glGetShaderInfoLog(p_fragment_shader, 512, NULL, infoLog);
-      printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
-  }
-
-  // Link Shaders into Program
-  pixel_shader = glCreateProgram();
-  glAttachShader(pixel_shader, p_vertex_shader);
-  glAttachShader(pixel_shader, p_fragment_shader);
-  glLinkProgram(pixel_shader);
-  
-  // Check for linking errors
-  glGetProgramiv(pixel_shader, GL_LINK_STATUS, &success);
-  if (!success) {
-      glGetProgramInfoLog(pixel_shader, 512, NULL, infoLog);
-      printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
-  }
-
-  // Cleanup individual shaders
-  glDeleteShader(p_vertex_shader);
-  glDeleteShader(p_fragment_shader);
-
-  // 5. Setup Vertex Data (The Dot)
-  float vertices[] = { 0.0f, 0.0f }; // NDC Center
-
-  glGenVertexArrays(1, &p_VAO);
-  glGenBuffers(1, &p_VBO);
-
-  glBindVertexArray(p_VAO);
-  glBindBuffer(GL_ARRAY_BUFFER, p_VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  // Position attribute
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0); 
-  glBindVertexArray(0); 
+	*/
 }
 
+    /*
 void draw_pixel(int x, int y, int width, int height) {
-    glUseProgram(pixel_shader);
+	glUseProgram(pixel_shader);
 
     // Get uniform locations
     int resLoc = glGetUniformLocation(pixel_shader, "u_resolution");
@@ -175,8 +161,14 @@ void draw_pixel(int x, int y, int width, int height) {
     glDrawArrays(GL_POINTS, 0, 1);
     glBindVertexArray(0);
 }
+	*/
+
+void draw_pixel(float x, float y, int r, int g, int b) { 
+  DrawRectangle(x, y, 1, 1, (Color) {r,g,b,255});
+}
 
 void init_line() {
+	/*
     int success;
     char infoLog[512];
 
@@ -229,9 +221,11 @@ void init_line() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
     glBindVertexArray(0); 
+	*/
 }
 
 void draw_line(float x1, float y1, float x2, float y2, int width, int height) {
+	/*
     glUseProgram(line_shader);
 	
 	int colorLoc = glGetUniformLocation(line_shader, "u_color");
@@ -253,6 +247,7 @@ void draw_line(float x1, float y1, float x2, float y2, int width, int height) {
     glBindVertexArray(l_VAO);
     glDrawArrays(GL_LINES, 0, 2);
     glBindVertexArray(0);
+	*/
 }
 
 void init_gl() {

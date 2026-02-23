@@ -1,17 +1,19 @@
 #include "window.h"
 #include "render.h"
-#include "glad/glad.h"
 #include "../misc/input_map.h"
 #include "../core/world.h"
+#include "raylib.h"
 
-#include <GL/gl.h>
 #include <math.h>
+
+Camera2D camera2D = {0};
+Camera3D camera3D = {0};
 
 bool init_window(Window *win, char *title, int width, int height) {
 	win->width = width;
 	win->height = height;
-	win->mode = WM_3D;
-	
+	win->mode = WM_2D;
+	/*
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -67,6 +69,12 @@ bool init_window(Window *win, char *title, int width, int height) {
 
 	// Init shaders
 	init_gl();
+	*/
+
+	//SetTargetFPS(fps);
+	SetTraceLogLevel(LOG_ERROR); 
+	InitWindow(width, height, title);
+	HideCursor();
 
 	// Window events
 	win->quit_event = new_event(E_TERM, 0);
@@ -82,10 +90,11 @@ bool init_window(Window *win, char *title, int width, int height) {
 }
 
 void swap_buffers(Window *win) {
-	SDL_GL_SwapWindow(win->sdl_window);
+	//SDL_GL_SwapWindow(win->sdl_window);
 }
 
 void handle_window_input(Window *win) {
+	/*
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 	  switch (event.type) {
@@ -122,13 +131,15 @@ void handle_window_input(Window *win) {
 
 	if (keystates[SDL_SCANCODE_L])
 		queue_event(win->em, win->look_right_event);
-	
+	*/
 }
 
 void draw_frame(Window *win) {
+	BeginDrawing();
+	
 	// Set background color
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	ClearBackground(BLACK);
+	DrawText("Wyrd Engine - indev", win->width-105, 0, 10, LIGHTGRAY);
 	
 	// Add 3D rendering code here
 	if (win->mode == WM_2D) {
@@ -136,38 +147,47 @@ void draw_frame(Window *win) {
 		float zoom_factor = 4.0f;
 		float x = win->ecs->position[0].x;
 		float y = win->ecs->position[0].z;
-		float wx = 0-x;
-		float wy = 0-y;
 		float theta = win->ecs->direction[0].y;
 		float tx = win->width/2 + 10*sin(theta);
 		float ty = win->height/2 + 10*cos(theta);
+		
+		camera2D.target = (Vector2){x-(win->width/(zoom_factor*2)), y-(win->height/(zoom_factor*2))};
+		camera2D.zoom = zoom_factor;
+
+		BeginMode2D(camera2D);
+
+		// draw user
+		draw_pixel(x, y, 255, 0, 255);
 		//draw_pixel(win->width/2, win->height/2, win->width, win->height);
-		//draw_pixel(tx, ty, win->width, win->height);
-		draw_line(win->width/2, win->height/2, tx, ty, win->width, win->height);
+		draw_pixel(tx, ty, 255, 0, 255);
+		//draw_line(win->width/2, win->height/2, tx, ty, win->width, win->height);
 		World *w = win->engine->world;
 		Vertex *v = w->v;
 		Line *l = w->l;
 		for (int i = 0; i < w->lc; i++) {
-			float hx = (v[l[i].head].x+wx)*zoom_factor;
-			float hz = (v[l[i].head].z+wy)*zoom_factor;
-			float tx = (v[l[i].tail].x+wx)*zoom_factor;
-			float tz = (v[l[i].tail].z+wy)*zoom_factor;
-			draw_line(hx, hz, tx, tz, win->width, win->height);
-			//draw_pixel((w->v[i].x+wx)*zoom_factor, (w->v[i].z+wy)*zoom_factor, win->width, win->height);
+			float hx = (v[l[i].head].x);
+			float hz = (v[l[i].head].z);
+			float tx = (v[l[i].tail].x);
+			float tz = (v[l[i].tail].z);
+			//draw_line(hx, hz, tx, tz, win->width, win->height);
+			draw_pixel(hx, hz, 0, 255, 255);
+			draw_pixel(tx, tz, 0, 255, 255);
 		}
 		//draw_pixel(20*zoom_factor, 20*zoom_factor, win->width, win->height);
 		//draw_pixel(20*zoom_factor, 30*zoom_factor, win->width, win->height);
+		EndMode2D();
 	} else if (win->mode == WM_3D) {
 		render_3D(win);
 	}
-	// Swap the buffers
-	swap_buffers(win);
 	handle_window_input(win);
+	EndDrawing();
 }
 
 
 void close_window(Window *win) {
+	/*
 	SDL_GL_DeleteContext(win->gl_context);
 	SDL_DestroyWindow(win->sdl_window);
 	SDL_Quit();
+	*/
 }

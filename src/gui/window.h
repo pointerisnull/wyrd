@@ -6,15 +6,15 @@
 
 #include <stdbool.h>
 
-#include <SDL2/SDL.h>
 
 #include "../ecs/ecs.h"
 #include "../core/events.h"
 #include "../core/engine.h"
+#include "raylib.h"
 
 typedef struct Window {
-	SDL_Window *sdl_window;
-	SDL_GLContext gl_context;
+	//SDL_Window *sdl_window;
+	//SDL_GLContext gl_context;
 
 	Engine *engine;
 	ECS *ecs;
