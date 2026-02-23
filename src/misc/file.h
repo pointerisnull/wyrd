@@ -1,7 +1,9 @@
 #ifndef FILE_IO_H
 #define FILE_IO_H
 
-int read_legacy_file(char *path);
+#include "../core/world.h"
+
+int read_legacy_file(World *w, char *path);
 void write_file(char *path);
 
 #endif

@@ -8,6 +8,7 @@
 #include "../misc/input_map.h"
 #include "../ecs/ecs.h"
 #include "events.h"
+#include "world.h"
 
 typedef struct Engine {
 	int64_t tick;
@@ -26,6 +27,7 @@ typedef struct Engine {
 	
 	EventManager *events;
 	ECS ecs;
+	World *world;
 
 	int I_MASKS[I_ENUM_COUNT];
 

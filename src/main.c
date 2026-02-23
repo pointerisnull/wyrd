@@ -13,7 +13,8 @@
 #include "misc/file.h"
 
 int main(int argc, char **argv) {
-	//read_legacy_file("./wyd/indev.wyd");
+	World world = new_world();
+	read_legacy_file(&world, "./wyd/save.cfworld");
 	//write_file("./wyd/indev.wyd");
 	
 	EventManager event_manager;
@@ -21,9 +22,11 @@ int main(int argc, char **argv) {
 
 	Engine engine = new_engine(20);
 	engine.events = &event_manager;
+	engine.world = &world;
 	
 	Window win;
 	init_window(&win, "Wyrd", DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	win.engine = &engine;
 	win.ecs = &engine.ecs;
 	win.em = &event_manager;
 

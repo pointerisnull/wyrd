@@ -2,6 +2,7 @@
 #include "render.h"
 #include "glad/glad.h"
 #include "../misc/input_map.h"
+#include "../core/world.h"
 
 #include <GL/gl.h>
 #include <math.h>
@@ -132,16 +133,30 @@ void draw_frame(Window *win) {
 	// Add 3D rendering code here
 	if (win->mode == WM_2D) {
 		// screen x,y -> world space x,z
-		float zoom_factor = 8.0f;
+		float zoom_factor = 4.0f;
 		float x = win->ecs->position[0].x;
 		float y = win->ecs->position[0].z;
+		float wx = 0-x;
+		float wy = 0-y;
 		float theta = win->ecs->direction[0].y;
-		float tx = x + 3*sin(theta);
-		float ty = y + 3*cos(theta);
-		draw_pixel(x*zoom_factor, y*zoom_factor, win->width, win->height);
-		draw_pixel(tx*zoom_factor, ty*zoom_factor, win->width, win->height);
-		draw_pixel(20*zoom_factor, 20*zoom_factor, win->width, win->height);
-		draw_pixel(20*zoom_factor, 30*zoom_factor, win->width, win->height);
+		float tx = win->width/2 + 10*sin(theta);
+		float ty = win->height/2 + 10*cos(theta);
+		//draw_pixel(win->width/2, win->height/2, win->width, win->height);
+		//draw_pixel(tx, ty, win->width, win->height);
+		draw_line(win->width/2, win->height/2, tx, ty, win->width, win->height);
+		World *w = win->engine->world;
+		Vertex *v = w->v;
+		Line *l = w->l;
+		for (int i = 0; i < w->lc; i++) {
+			float hx = (v[l[i].head].x+wx)*zoom_factor;
+			float hz = (v[l[i].head].z+wy)*zoom_factor;
+			float tx = (v[l[i].tail].x+wx)*zoom_factor;
+			float tz = (v[l[i].tail].z+wy)*zoom_factor;
+			draw_line(hx, hz, tx, tz, win->width, win->height);
+			//draw_pixel((w->v[i].x+wx)*zoom_factor, (w->v[i].z+wy)*zoom_factor, win->width, win->height);
+		}
+		//draw_pixel(20*zoom_factor, 20*zoom_factor, win->width, win->height);
+		//draw_pixel(20*zoom_factor, 30*zoom_factor, win->width, win->height);
 	} else if (win->mode == WM_3D) {
 		render_3D(win);
 	}

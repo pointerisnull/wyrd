@@ -11,8 +11,8 @@ typedef struct Vertex {
 
 typedef struct Line {
   uint32_t id;
-  Vertex *head;   //start vertex
-  Vertex *tail;   //end vertex
+  uint32_t head;   //start vertex
+  uint32_t tail;   //end vertex
   uint8_t normal; //facing direction
   uint8_t is_portal;
   uint32_t adjacent_sector;
@@ -22,7 +22,7 @@ typedef struct Line {
 typedef struct Sector {
   uint32_t id;
   uint32_t linec;
-  Line *first_line;
+  uint32_t first_line;
 
 } Sector;
 

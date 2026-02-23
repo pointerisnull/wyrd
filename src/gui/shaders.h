@@ -45,6 +45,28 @@ const char *pixel_fragment_shader =
    "out vec4 FragColor;\n"
    "void main() { FragColor = vec4(0.0, 1.0, 1.0, 1.0); }\0"; 
 
+const char *line_vertex_shader = 
+    "#version 330 core\n"
+    "layout (location = 0) in vec2 aPos;\n"
+    "uniform vec2 u_resolution;\n"
+    "void main() {\n"
+    "    // Convert pixel space (0,0 to width,height) to (0,0 to 1,1)\n"
+    "    vec2 zeroToOne = aPos / u_resolution;\n"
+    "    // Convert to (0,0 to 2,2)\n"
+    "    vec2 zeroToTwo = zeroToOne * 2.0;\n"
+    "    // Convert to (-1,-1 to 1,1) NDC\n"
+    "    vec2 clipSpace = zeroToTwo - 1.0;\n"
+    "    // Flip Y-axis so 0 is top and 'height' is bottom\n"
+    "    gl_Position = vec4(clipSpace.x, -clipSpace.y, 0.0, 1.0);\n"
+    "}\0";
+
+const char *line_fragment_shader = 
+    "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "uniform vec4 u_color;\n"
+    "void main() {\n"
+    "    FragColor = u_color;\n"
+    "}\0";
 
 /*
 float vertices[] = {
