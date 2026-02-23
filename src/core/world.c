@@ -1,15 +1,18 @@
 #include "world.h"
 #include "primitives.h"
 
+#include <stdio.h>
+
 World new_world() {
 	World w;
 
-    int chunk_size = CHUNK_SIZE;
-    int vc = 0;
-    int lc = 0;
-    int sc = 0;
-    int cc = 0;
+    w.chunk_size = CHUNK_SIZE;
+    w.vc = 0;
+    w.lc = 0;
+    w.sc = 0;
+    w.cc = 0;
 
+	return w;
 }
 
 void new_vertex(World *w, int x, int z, int yb, int yt) {
@@ -20,7 +23,13 @@ void new_vertex(World *w, int x, int z, int yb, int yt) {
 }
 
 void new_line(World *w, int head_id, int tail_id) {
-	w->l[w->lc] = (Line){w->lc, head_id, tail_id, 0, 0, 0xFFFFFFFF};
+	w->l[w->lc] = (Line){w->lc, (uint32_t)head_id, (uint32_t)tail_id, 0, 0, -1};
+	w->l[w->lc].id = w->lc;
+	w->l[w->lc].head = (uint32_t)head_id;
+	w->l[w->lc].tail = (uint32_t)tail_id;
+	w->l[w->lc].is_portal = 0;
+	w->l[w->lc].normal = 0;
+	w->l[w->lc].adjacent_sector = -1;
 	w->lc++;
 }
 

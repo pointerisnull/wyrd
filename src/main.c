@@ -14,7 +14,7 @@
 
 int main(int argc, char **argv) {
 	World world = new_world();
-	read_legacy_file(&world, "./wyd/save.cfworld");
+	read_legacy_file(&world, "./wyd/indev.wyd");
 	//write_file("./wyd/indev.wyd");
 	
 	EventManager event_manager;
