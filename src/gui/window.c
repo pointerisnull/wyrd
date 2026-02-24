@@ -27,6 +27,8 @@ bool init_window(Window *win, char *title, int width, int height) {
 	win->right_event = new_event(E_INPUT, I_STRAFE_RIGHT);
 	win->look_left_event = new_event(E_INPUT, I_YAW_LEFT);
 	win->look_right_event = new_event(E_INPUT, I_YAW_RIGHT);
+	win->look_up_event = new_event(E_INPUT, I_PITCH_UP);
+	win->look_down_event = new_event(E_INPUT, I_PITCH_DOWN);
 	win->jump_event = new_event(E_INPUT, I_JUMP);
 	win->sprint_event = new_event(E_INPUT, I_SPRINT);
 	win->slow_event = new_event(E_INPUT, I_WALK);
@@ -40,6 +42,12 @@ void handle_window_input(Window *win) {
 	
 	if(IsKeyDown(KEY_L)) 
 		queue_event(win->em, win->look_right_event);
+	
+	if(IsKeyDown(KEY_J)) 
+		queue_event(win->em, win->look_down_event);
+	
+	if(IsKeyDown(KEY_K)) 
+		queue_event(win->em, win->look_up_event);
 	
 	if(IsKeyDown(KEY_W)) 
 		queue_event(win->em, win->forward_event);
@@ -91,7 +99,9 @@ void draw_frame(Window *win) {
 			break;
 	}
 	
-	DrawText("Wyrd Engine - indev", win->width-105, 0, 10, LIGHTGRAY);
+	DrawText("Wyrd Engine - indev", 5, 0, 10, LIGHTGRAY);
+	DrawText("--------------------", 5, 10, 5, LIGHTGRAY);
+	DrawText(TextFormat("x: %f\ny: %f\nz: %f", win->ecs->position[0].x, win->ecs->position[0].y, win->ecs->position[0].z), 5, 20, 10, LIGHTGRAY);
 
 	handle_window_input(win);
 	EndDrawing();

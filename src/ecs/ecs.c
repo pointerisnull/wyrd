@@ -149,7 +149,7 @@ void apply_movement(ECS *ecs, eid_t id, int direction) {
 			return;
 		case M_YAW_LEFT: // looking left
 			ecs->direction[id].y += ecs->rotspeed[id]*ecs->dt;
-			if (ecs->direction[id].y < 0) {
+			if (ecs->direction[id].y < 0.0f) {
 				ecs->direction[id].y += 6.28319f; // 2*PI
 			}
 			return;
@@ -159,9 +159,17 @@ void apply_movement(ECS *ecs, eid_t id, int direction) {
 				ecs->direction[id].y -= 6.28319f; // 2*PI
 			}
 			return;
-		case M_PITCH_UP: // looking up
+		case M_PITCH_UP: // looking up 
+			if (ecs->direction[id].z >= (PI/2)) {
+				return;
+			}
+			ecs->direction[id].z += (ecs->rotspeed[id]-0.5)*ecs->dt;
 			return;
 		case M_PITCH_DOWN: // looking down
+			if (ecs->direction[id].z < -(PI/2)) {
+				return;
+			}
+			ecs->direction[id].z -= (ecs->rotspeed[id]-0.5)*ecs->dt;
 			return;
 		case M_ROLL: // rotating view 
 			return;

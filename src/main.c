@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 	EventManager event_manager;
 	clear_manager(&event_manager);
 
-	Engine engine = new_engine(20);
+	Engine engine = new_engine(40);
 	engine.events = &event_manager;
 	engine.world = &world;
 	

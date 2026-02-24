@@ -135,6 +135,14 @@ void execute_input(Engine *e, int val) {
 			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_YAW_RIGHT);
 			queue_event(e->events, ev);
 			return;
+		case I_PITCH_UP:
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_PITCH_UP);
+			queue_event(e->events, ev);
+			return;
+		case I_PITCH_DOWN:
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_PITCH_DOWN);
+			queue_event(e->events, ev);
+			return;
 		case I_JUMP:
 			// Do nothing for now
 			return;
