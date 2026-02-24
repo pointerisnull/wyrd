@@ -37,6 +37,8 @@ enum Movement {
 	M_PITCH_DOWN,
 	M_ROLL,
 	M_JUMP,
+	M_SPRINT,
+	M_WALK,
 
 	M_ENUM_COUNT // Keep last, used to create bitmasks for these enums
 };

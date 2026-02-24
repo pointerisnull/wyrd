@@ -42,7 +42,7 @@ int read_legacy_file(World *w, char *path) {
     struct legacy_vertex *vertices = malloc(sizeof(struct legacy_vertex)*vertex_count);
     fread(vertices, sizeof(struct legacy_vertex), vertex_count, fp);
     for (int i = 0; i < vertex_count; i++) {
-        printf("Vertex %d -> x: %d y: %d\n", i, vertices[i].x, vertices[i].y);
+        //printf("Vertex %d -> x: %d y: %d\n", i, vertices[i].x, vertices[i].y);
 		new_vertex(w, (int32_t) vertices[i].x, (int32_t) vertices[i].y, 0, 5);
     }
 
@@ -58,7 +58,7 @@ int read_legacy_file(World *w, char *path) {
     struct legacy_line *lines = malloc(sizeof(struct legacy_line)*line_count);
     fread(lines, sizeof(struct legacy_line), line_count, fp);
     for (int i = 0; i < line_count; i++) {
-        printf("Line %d -> Start Vertex %d End Vertex: %d\n", i, lines[i].start_vertex, lines[i].end_vertex);
+        //printf("Line %d -> Start Vertex %d End Vertex: %d\n", i, lines[i].start_vertex, lines[i].end_vertex);
 		new_line(w, (uint32_t)lines[i].start_vertex, (uint32_t)lines[i].end_vertex);
     }
 
@@ -73,7 +73,7 @@ int read_legacy_file(World *w, char *path) {
     struct legacy_sector *sectors = malloc(sizeof(struct legacy_sector)*sector_count);
     fread(sectors, sizeof(struct legacy_sector), sector_count, fp);
     for (int i = 0; i < sector_count; i++) {
-        printf("Sector %d -> Line count: %d\n", i, sectors[i].line_count);
+        //printf("Sector %d -> Line count: %d\n", i, sectors[i].line_count);
 		new_sector(w, sectors[i].start_line, sectors[i].line_count);
     }
 

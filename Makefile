@@ -1,12 +1,14 @@
 ifeq ($(OS), Windows_NT)
     # WINDOWS SETTINGS
 	EXEC := a.exe
-    SDL_PATH :=C:/msys64/mingw64
+    #SDL_PATH :=C:/msys64/mingw64
     
-    INCLUDES := -Isrc/lib/glad/include -I$(SDL_PATH)/include/SDL2
-    LIBS := -L$(SDL_PATH)/lib -lmingw32 -lSDL2main -lSDL2 -mconsole
+    #INCLUDES := -Isrc/lib/glad/include -I$(SDL_PATH)/include/SDL2
+    INCLUDES := -I src/lib/include/
+    #LIBS := -L$(SDL_PATH)/lib -lmingw32 -lSDL2main -lSDL2 -mconsole
+    LIBS := -L src/lib -lraylib -lm
     RM := del /q
-    CLEAN_PATH := src\lib\glad\src\glad.o src\main.o src\ecs\*.o src\gui\*.o src\core\*.o src\misc\*.o src\state\*.o $(EXEC)
+    CLEAN_PATH := src\main.o src\ecs\*.o src\gui\*.o src\core\*.o src\misc\*.o src\state\*.o $(EXEC)
 else
     # LINUX SETTINGS
     EXEC := a.out
@@ -14,7 +16,7 @@ else
     INCLUDES := -I src/lib/include/
     LIBS := -L src/lib -lraylib -lm
     RM := rm -f
-    CLEAN_PATH := src/lib/glad/src/glad.o src/main.o src/ecs/*.o src/gui/*.o src/core/*.o src/misc/*.o src/state/*.o $(EXEC)
+    CLEAN_PATH := src/main.o src/ecs/*.o src/gui/*.o src/core/*.o src/misc/*.o src/state/*.o $(EXEC)
 endif
 
 CXX := gcc

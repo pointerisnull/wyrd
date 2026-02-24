@@ -22,8 +22,10 @@ typedef struct Window {
 
 	int width; 
 	int height;
-
 	int mode;
+
+	Camera2D cam2;
+	Camera3D cam3;
 
 	Event quit_event;
 	Event forward_event;
@@ -33,6 +35,8 @@ typedef struct Window {
 	Event look_left_event;
 	Event look_right_event;
 	Event jump_event;
+	Event sprint_event;
+	Event slow_event;
 
 } Window;
 

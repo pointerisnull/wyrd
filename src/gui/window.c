@@ -6,70 +6,13 @@
 
 #include <math.h>
 
-Camera2D camera2D = {0};
-Camera3D camera3D = {0};
-
 bool init_window(Window *win, char *title, int width, int height) {
 	win->width = width;
 	win->height = height;
 	win->mode = WM_2D;
-	/*
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		return false;
-	}
-	
-	// Version stuff
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	
-	// Coloring. Allocates AT LEAST N bits for each
-	int N = 8;
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, N);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, N);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, N);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, N);
-	
-	//SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 32);
-	// Allocates space for two windows. Renders one frame while the other is being drawn
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-
-	win->sdl_window = SDL_CreateWindow(
-		title,
-		SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED,
-		width,
-		height,
-		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
-	);
-	
-	if (!win->sdl_window) {
-		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-		return false;
-	}
-	
-	// Create a new context for OpenGL
-	win->gl_context = SDL_GL_CreateContext(win->sdl_window);
-
-	if (!win->gl_context) {
-		printf("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
-		return false;
-	}
-	
-	// VSync for OpenGL
-	bool enable_vsync = true;
-	SDL_GL_SetSwapInterval(enable_vsync);
-	
-	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-		printf("Failed to initialize GLAD\n");
-		return false;
-	}
-
-	// Init shaders
-	init_gl();
-	*/
+	win->cam2 = (Camera2D){0};
+	win->cam3 = (Camera3D){0};
 
 	//SetTargetFPS(fps);
 	SetTraceLogLevel(LOG_ERROR); 
@@ -85,53 +28,49 @@ bool init_window(Window *win, char *title, int width, int height) {
 	win->look_left_event = new_event(E_INPUT, I_YAW_LEFT);
 	win->look_right_event = new_event(E_INPUT, I_YAW_RIGHT);
 	win->jump_event = new_event(E_INPUT, I_JUMP);
+	win->sprint_event = new_event(E_INPUT, I_SPRINT);
+	win->slow_event = new_event(E_INPUT, I_WALK);
 
 	return true;
 }
 
-void swap_buffers(Window *win) {
-	//SDL_GL_SwapWindow(win->sdl_window);
-}
-
 void handle_window_input(Window *win) {
-	/*
-	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
-	  switch (event.type) {
-	    case SDL_QUIT:
-			queue_event(win->em, win->quit_event);
-			break;
-		case SDL_KEYUP: // Handle discrete key presses here
-			if (event.key.keysym.sym == 110) { // N key
-				win->mode = (win->mode == WM_2D) ? WM_3D : WM_2D;
-			}
-			break;
-		}
-	}
-	// Handle non-discrete key inputs down here
-	const Uint8* keystates = SDL_GetKeyboardState(NULL);
+	if(IsKeyDown(KEY_H))
+		queue_event(win->em, win->look_left_event);
 	
-	if (keystates[SDL_SCANCODE_SPACE])
-		queue_event(win->em, win->jump_event);
-	 
-	if (keystates[SDL_SCANCODE_W])
+	if(IsKeyDown(KEY_L)) 
+		queue_event(win->em, win->look_right_event);
+	
+	if(IsKeyDown(KEY_W)) 
 		queue_event(win->em, win->forward_event);
 	
-	if (keystates[SDL_SCANCODE_S])
+	if(IsKeyDown(KEY_S)) 
 		queue_event(win->em, win->backward_event);
 	
-	if (keystates[SDL_SCANCODE_A])
+	if(IsKeyDown(KEY_D)) 
+		queue_event(win->em, win->right_event);
+	
+	if(IsKeyDown(KEY_A)) 
 		queue_event(win->em, win->left_event);
 	
-	if (keystates[SDL_SCANCODE_D])
-		queue_event(win->em, win->right_event);
+	if(IsKeyDown(KEY_SPACE))
+		queue_event(win->em, win->jump_event);
+	
+	if(IsKeyPressed(KEY_LEFT_SHIFT))
+		queue_event(win->em, win->sprint_event);
+	
+	if(IsKeyReleased(KEY_LEFT_SHIFT))
+		queue_event(win->em, win->slow_event);
 
-	if (keystates[SDL_SCANCODE_H])
-		queue_event(win->em, win->look_left_event);
+	if(IsKeyPressed(KEY_F))
+		ToggleFullscreen();
+	
+	if(IsKeyPressed(KEY_Q))
+		queue_event(win->em, win->quit_event);
+	
+	if(IsKeyPressed(KEY_M))
+		win->mode = (win->mode == WM_2D) ? WM_3D : WM_2D;
 
-	if (keystates[SDL_SCANCODE_L])
-		queue_event(win->em, win->look_right_event);
-	*/
 }
 
 void draw_frame(Window *win) {
@@ -139,55 +78,25 @@ void draw_frame(Window *win) {
 	
 	// Set background color
 	ClearBackground(BLACK);
-	DrawText("Wyrd Engine - indev", win->width-105, 0, 10, LIGHTGRAY);
 	
-	// Add 3D rendering code here
-	if (win->mode == WM_2D) {
-		// screen x,y -> world space x,z
-		float zoom_factor = 4.0f;
-		float x = win->ecs->position[0].x;
-		float y = win->ecs->position[0].z;
-		float theta = win->ecs->direction[0].y;
-		float tx = win->width/2 + 10*sin(theta);
-		float ty = win->height/2 + 10*cos(theta);
-		
-		camera2D.target = (Vector2){x-(win->width/(zoom_factor*2)), y-(win->height/(zoom_factor*2))};
-		camera2D.zoom = zoom_factor;
-
-		BeginMode2D(camera2D);
-
-		// draw user
-		draw_pixel(x, y, 255, 0, 255);
-		//draw_pixel(win->width/2, win->height/2, win->width, win->height);
-		draw_pixel(tx, ty, 255, 0, 255);
-		//draw_line(win->width/2, win->height/2, tx, ty, win->width, win->height);
-		World *w = win->engine->world;
-		Vertex *v = w->v;
-		Line *l = w->l;
-		for (int i = 0; i < w->lc; i++) {
-			float hx = (v[l[i].head].x);
-			float hz = (v[l[i].head].z);
-			float tx = (v[l[i].tail].x);
-			float tz = (v[l[i].tail].z);
-			//draw_line(hx, hz, tx, tz, win->width, win->height);
-			draw_pixel(hx, hz, 0, 255, 255);
-			draw_pixel(tx, tz, 0, 255, 255);
-		}
-		//draw_pixel(20*zoom_factor, 20*zoom_factor, win->width, win->height);
-		//draw_pixel(20*zoom_factor, 30*zoom_factor, win->width, win->height);
-		EndMode2D();
-	} else if (win->mode == WM_3D) {
-		render_3D(win);
+	// Render Scene
+	switch (win->mode) {
+		case WM_3D:
+			render_3D(win);
+			break;
+		case WM_2D:
+			render_2D(win);
+			break;
+		default:
+			break;
 	}
+	
+	DrawText("Wyrd Engine - indev", win->width-105, 0, 10, LIGHTGRAY);
+
 	handle_window_input(win);
 	EndDrawing();
 }
 
-
 void close_window(Window *win) {
-	/*
-	SDL_GL_DeleteContext(win->gl_context);
-	SDL_DestroyWindow(win->sdl_window);
-	SDL_Quit();
-	*/
+	CloseWindow();
 }

@@ -9,7 +9,8 @@
 #define MAX_ENTITIES 1024
 #define SLOT_BITSET_ARR MAX_ENTITIES/(sizeof(bitset_t)*8)
 
-#define DEFAULT_SPEED 1.5f
+#define DEFAULT_SPEED 2.5f
+#define SPRINT_MODIFIER 2.0f
 #define DEFAULT_ROTSPEED 2.0f
 #define DEFAULT_ENTITY_DRAG 0.75f
 

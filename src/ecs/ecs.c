@@ -170,6 +170,11 @@ void apply_movement(ECS *ecs, eid_t id, int direction) {
 				ecs->velocity[id].y = 5;
 			}
 			return;
+		case M_SPRINT:
+			ecs->speed[id] = DEFAULT_SPEED + SPRINT_MODIFIER;
+			return;
+		case M_WALK:
+			ecs->speed[id] = DEFAULT_SPEED;
 		default:
 			return;
 	}

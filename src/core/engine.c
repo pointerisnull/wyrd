@@ -135,6 +135,17 @@ void execute_input(Engine *e, int val) {
 			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_YAW_RIGHT);
 			queue_event(e->events, ev);
 			return;
+		case I_JUMP:
+			// Do nothing for now
+			return;
+		case I_SPRINT:
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_SPRINT);
+			queue_event(e->events, ev);
+			return;
+		case I_WALK:
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_WALK);
+			queue_event(e->events, ev);
+			return;		
 		default:
 			printf("Input %d could not be determined.\n", val);
 			return;
@@ -147,6 +158,7 @@ void handle_input(Engine *e) {
 	
 	int inputs = e->input;
 	int inputc = count_bits(e->input);
+	print_bitset(e->input);
 	int i = 0;
 	while (inputs) {
 		if (inputs & 0x1) {

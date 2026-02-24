@@ -14,6 +14,7 @@ enum input_t {
 	I_PITCH_UP,
 	I_PITCH_DOWN,
 	I_SPRINT,
+	I_WALK,
 	I_JUMP,
 	I_INTERACT,
 	I_DESTROY,
