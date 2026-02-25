@@ -1,18 +1,18 @@
 ifeq ($(OS), Windows_NT)
     # WINDOWS SETTINGS
 	EXEC := a.exe
-    
+    STATIC_LIBS := src/lib/win64/libraylib.a
     INCLUDES := -I src/lib/include/
-    LIBS := -lopengl32 -lgdi32 -lwinmm -lshell32 -luser32 -lm
+    LINK := -lopengl32 -lgdi32 -lwinmm -lshell32 -luser32 -lm
     RM := del /q
     CLEAN_PATH := src\main.o src\ecs\*.o src\gui\*.o src\core\*.o src\misc\*.o src\state\*.o $(EXEC)
     PLATFORM_FLAGS := -DRAYLIB_STATIC -D_WINDLL -D_AMD64_
 else
     # LINUX SETTINGS
     EXEC := a.out
-
+    STATIC_LIBS := src/lib/linux/libraylib.a
     INCLUDES := -I src/lib/include/
-    LIBS := -L src/lib -lraylib -lm
+    LINK := -L src/lib/linux/ -lraylib -lm
     RM := rm -f
     CLEAN_PATH := src/main.o src/ecs/*.o src/gui/*.o src/core/*.o src/misc/*.o src/state/*.o $(EXEC)
     PLATFORM_FLAGS := 
@@ -28,10 +28,7 @@ OBJS := $(SRCS:.c=.o)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(EXEC): $(OBJS)
-	$(CXX) $(OBJS) src/lib/libraylib.a -o $(EXEC) $(LIBS)
-
-#$(EXEC): $(OBJS)
-#	$(CXX) $(OBJS) -o $(EXEC) src/lib/libraylib.a $(LIBS)
+	$(CXX) $(OBJS) $(STATIC_LIBS) -o $(EXEC) $(LINK)
 
 clean:
 	$(RM) $(CLEAN_PATH)
