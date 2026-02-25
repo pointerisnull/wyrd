@@ -6,10 +6,6 @@
 #include "gui/window.h"
 #include <stdio.h>
 
-#if defined(_WIN32)
-  #include <SDL2/SDL.h>
-#endif
-
 #include "misc/file.h"
 
 int main(int argc, char **argv) {

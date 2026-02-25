@@ -1,14 +1,12 @@
 ifeq ($(OS), Windows_NT)
     # WINDOWS SETTINGS
 	EXEC := a.exe
-    #SDL_PATH :=C:/msys64/mingw64
     
-    #INCLUDES := -Isrc/lib/glad/include -I$(SDL_PATH)/include/SDL2
     INCLUDES := -I src/lib/include/
-    #LIBS := -L$(SDL_PATH)/lib -lmingw32 -lSDL2main -lSDL2 -mconsole
-    LIBS := -L src/lib -lraylib -lm
+    LIBS := -lopengl32 -lgdi32 -lwinmm -lshell32 -luser32 -lm
     RM := del /q
     CLEAN_PATH := src\main.o src\ecs\*.o src\gui\*.o src\core\*.o src\misc\*.o src\state\*.o $(EXEC)
+    PLATFORM_FLAGS := -DRAYLIB_STATIC -D_WINDLL -D_AMD64_
 else
     # LINUX SETTINGS
     EXEC := a.out
@@ -17,10 +15,11 @@ else
     LIBS := -L src/lib -lraylib -lm
     RM := rm -f
     CLEAN_PATH := src/main.o src/ecs/*.o src/gui/*.o src/core/*.o src/misc/*.o src/state/*.o $(EXEC)
+    PLATFORM_FLAGS := 
 endif
 
 CXX := gcc
-CXXFLAGS := -std=c99
+CXXFLAGS := -std=c99 $(PLATFORM_FLAGS) -Wall
 
 SRCS := src/main.c $(wildcard src/gui/*.c src/core/*.c src/misc/*.c src/state/*.c src/ecs/*.c)
 OBJS := $(SRCS:.c=.o)
@@ -29,7 +28,10 @@ OBJS := $(SRCS:.c=.o)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(INCLUDES) $(LIBS)
+	$(CXX) $(OBJS) src/lib/libraylib.a -o $(EXEC) $(LIBS)
+
+#$(EXEC): $(OBJS)
+#	$(CXX) $(OBJS) -o $(EXEC) src/lib/libraylib.a $(LIBS)
 
 clean:
 	$(RM) $(CLEAN_PATH)
