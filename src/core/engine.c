@@ -43,7 +43,6 @@ bool can_engine_tick(Engine *e) {
 		return false;
 
 	uint64_t current_time = current_time_ms();
-	//printf("\nCurrent:\t%d\nlast:\t\t%d\npassed:\t\t%d\n", current_time, e->last_tick_time, (uint64_t)(e->last_tick_time + e->tick_delta));
 	if(current_time >= (uint64_t)(e->last_tick_time + e->tick_delta))
 		return true;
 	return false;
@@ -94,7 +93,6 @@ void handle_event(Engine *e, Event ev) {
 void handle_events(Engine *e) {
 	if (e->events->eventc <= 0)
 		return;
-	//printf("Handling events for tick %ld\n",e->tick);
 	e->events->processing = 1;
 	for (int i = 0; i < e->events->eventc; i++) {
 		Event ev = next_event(e->events);
@@ -108,22 +106,18 @@ void execute_input(Engine *e, int val) {
 	Event ev;
 	switch (val) {
 		case I_FORWARD:
-			//printf("Forward input detected!\n");
 			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_FORWARD);
 			queue_event(e->events, ev);
 			return;
 		case I_BACKWARD:
-			//printf("Reverse input detected!\n");
 			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_BACKWARD);
 			queue_event(e->events, ev);
 			return;
 		case I_STRAFE_LEFT:
-			//printf("Strafe left input detected!\n");
 			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_STRAFE_LEFT);
 			queue_event(e->events, ev);
 			return;
 		case I_STRAFE_RIGHT:
-			//printf("Strafe right input detected!\n");	
 			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_STRAFE_RIGHT);
 			queue_event(e->events, ev);
 			return;
@@ -168,7 +162,7 @@ void handle_input(Engine *e) {
 	
 	int inputs = e->input;
 	int inputc = count_bits(e->input);
-	print_bitset(e->input);
+	//print_bitset(e->input);
 	int i = 0;
 	while (inputs) {
 		if (inputs & 0x1) {

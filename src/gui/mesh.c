@@ -182,8 +182,8 @@ int calculate_triangle_count(World *w) {
 
 int shred_map(World *world, WyrdMesh *mesh) {
 	int flatTriangles = calculate_triangle_count(world);
-	printf("Flat Triangle Count: %d\n", flatTriangles);
-	printf("Line Count: %d\n", world->lc);
+	//printf("Flat Triangle Count: %d\n", flatTriangles);
+	//printf("Line Count: %d\n", world->lc);
   
 	// each wall has 2 triangles, each triangle 3 verticies, each vertex 3 coords + 2 extra for portals + sector flat triangles
 	mesh->triangle_count = world->lc*2 + (world->pc*2) + 0; //flatTriangles;
