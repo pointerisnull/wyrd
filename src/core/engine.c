@@ -145,6 +145,8 @@ void execute_input(Engine *e, int val) {
 			return;
 		case I_JUMP:
 			// Do nothing for now
+			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_JUMP);
+			queue_event(e->events, ev);
 			return;
 		case I_SPRINT:
 			ev = entity_event(0, E_MOVE, (Vec3){0,0,0}, M_SPRINT);

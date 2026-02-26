@@ -97,7 +97,7 @@ void move_entity(ECS *ecs, eid_t id, Vec3 pos) {
 
 void update_physics(ECS *ecs) {
 	// PLEASE PLEASE PLEASE OPTIMIZE THIS
-	for (int i = 0; i < MAX_ENTITIES; i++) {
+	for (int i = 0; i < ecs->entityc; i++) {
 		if (get_bit(ecs->slots[i/(sizeof(bitset_t)*8)], i%(sizeof(bitset_t)*8)) == 1) {
 			// Apply velocity to position
 			ecs->position[i].x += ecs->velocity[i].x;
