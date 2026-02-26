@@ -2,6 +2,7 @@
 #include "shaders.h"
 #include "../misc/math.h"
 #include "raylib.h"
+#include "mesh.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -13,6 +14,10 @@ void draw_pixel(float x, float y, int r, int g, int b) {
 void draw_line(float x1, float y1, float x2, float y2, int r, int g, int b) {
 	DrawLine(x1, y1, x2, y2, (Color){r, g, b, 255});
 }
+
+WyrdMesh wmesh;
+Model model = {0};
+Texture2D tex = {0};
 
 void render_3D(Window *win) {
 	float px = win->ecs->position[0].x;
@@ -39,6 +44,36 @@ void render_3D(Window *win) {
 
 	// Render 3d scene here
 	DrawGrid(10, 1.0f);
+	if (win->shred_flag) {
+		shred_map(win->engine->world, &wmesh);
+
+		Mesh mesh = { 0 };
+		mesh.triangleCount = wmesh.triangle_count;
+		mesh.vertexCount = wmesh.triangle_count*3;
+		mesh.vertices = (float *)MemAlloc(1 + mesh.vertexCount*3*sizeof(float));    
+		mesh.texcoords = (float *)MemAlloc(mesh.vertexCount*2*sizeof(float)); 
+		mesh.normals = (float *)MemAlloc(mesh.vertexCount*3*sizeof(float));
+		
+		int vcount = wmesh.triangle_count*9;
+		for(int i = 0; i < vcount; i++) {
+			mesh.vertices[i] = (float) wmesh.vertex_array[i];
+
+		}
+		
+		tex = LoadTexture("res/years.bmp");
+		int tcount = wmesh.triangle_count*6;
+
+		for(int j = 0; j < tcount; j++) {
+			mesh.texcoords[j] = (float) wmesh.texture_coord_array[j];
+		}
+
+		UploadMesh(&mesh, true);
+		model = LoadModelFromMesh(mesh);
+		model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex;
+		win->shred_flag = 0;
+	} else {
+		DrawModel(model, (Vector3){0.0f, 0.0f, 0.0f}, 1.0f, WHITE);
+	}
 
 	EndMode3D();
 }

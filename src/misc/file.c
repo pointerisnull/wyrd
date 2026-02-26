@@ -43,7 +43,7 @@ int read_legacy_file(World *w, char *path) {
     fread(vertices, sizeof(struct legacy_vertex), vertex_count, fp);
     for (int i = 0; i < vertex_count; i++) {
         //printf("Vertex %d -> x: %d y: %d\n", i, vertices[i].x, vertices[i].y);
-		new_vertex(w, (int32_t) vertices[i].x, (int32_t) vertices[i].y, 0, 5);
+		new_vertex(w, (int32_t) vertices[i].x, (int32_t) vertices[i].y);
     }
 
     struct legacy_line {
@@ -59,7 +59,7 @@ int read_legacy_file(World *w, char *path) {
     fread(lines, sizeof(struct legacy_line), line_count, fp);
     for (int i = 0; i < line_count; i++) {
         //printf("Line %d -> Start Vertex %d End Vertex: %d\n", i, lines[i].start_vertex, lines[i].end_vertex);
-		new_line(w, (uint32_t)lines[i].start_vertex, (uint32_t)lines[i].end_vertex);
+		new_line(w, (uint32_t)lines[i].start_vertex, (uint32_t)lines[i].end_vertex, lines[i].sector, lines[i].adj_sector, lines[i].is_portal);
     }
 
     struct legacy_sector {
@@ -74,7 +74,7 @@ int read_legacy_file(World *w, char *path) {
     fread(sectors, sizeof(struct legacy_sector), sector_count, fp);
     for (int i = 0; i < sector_count; i++) {
         //printf("Sector %d -> Line count: %d\n", i, sectors[i].line_count);
-		new_sector(w, sectors[i].start_line, sectors[i].line_count);
+		new_sector(w, sectors[i].start_line, sectors[i].line_count, sectors[i].floor, sectors[i].ceiling, sectors[i].normal);
     }
 
     free(vertices);

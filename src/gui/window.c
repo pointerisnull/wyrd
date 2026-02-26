@@ -10,6 +10,7 @@ bool init_window(Window *win, char *title, int width, int height) {
 	win->width = width;
 	win->height = height;
 	win->mode = WM_2D;
+	win->shred_flag = 0;
 
 	win->cam2 = (Camera2D){0};
 	win->cam3 = (Camera3D){0};
@@ -78,6 +79,9 @@ void handle_window_input(Window *win) {
 	
 	if(IsKeyPressed(KEY_M))
 		win->mode = (win->mode == WM_2D) ? WM_3D : WM_2D;
+	
+	if(IsKeyPressed(KEY_V))
+		win->shred_flag = 1;
 
 }
 

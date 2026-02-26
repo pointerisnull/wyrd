@@ -23,6 +23,7 @@ typedef struct Window {
 	int width; 
 	int height;
 	int mode;
+	int shred_flag;
 
 	Camera2D cam2;
 	Camera3D cam3;
