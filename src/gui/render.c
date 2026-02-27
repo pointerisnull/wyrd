@@ -60,7 +60,7 @@ void render_3D(Window *win) {
 
 		}
 		
-		tex = LoadTexture("res/years.bmp");
+		tex = LoadTexture("res/brick.png");
 		int tcount = wmesh.triangle_count*6;
 
 		for(int j = 0; j < tcount; j++) {
