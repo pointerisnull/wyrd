@@ -13,6 +13,6 @@ struct WyrdMesh {
 	uint16_t triangle_count;
 };
 
-int shred_map(World *world, WyrdMesh *mesh);
+int shred_sector(World *world, int sector_id, WyrdMesh *mesh);
 
 #endif

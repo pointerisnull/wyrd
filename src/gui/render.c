@@ -19,6 +19,33 @@ WyrdMesh wmesh;
 Model model = {0};
 Texture2D tex = {0};
 
+int sect_id = 0;
+
+Mesh create_mesh(WyrdMesh wm) {
+	Mesh mesh = { 0 };
+	mesh.triangleCount = wm.triangle_count;
+	mesh.vertexCount = wm.triangle_count*3;
+	mesh.vertices = (float *)MemAlloc(1 + mesh.vertexCount*3*sizeof(float));    
+	mesh.texcoords = (float *)MemAlloc(mesh.vertexCount*2*sizeof(float)); 
+	mesh.normals = (float *)MemAlloc(mesh.vertexCount*3*sizeof(float));
+	
+	int vcount = wm.triangle_count*9;
+	for(int i = 0; i < vcount; i++) {
+		mesh.vertices[i] = (float) wm.vertex_array[i];
+
+	}
+	
+	int tcount = wm.triangle_count*6;
+
+	for(int j = 0; j < tcount; j++) {
+		mesh.texcoords[j] = (float) wm.texture_coord_array[j];
+	}
+
+	UploadMesh(&mesh, true);
+
+	return mesh;
+}
+
 void render_3D(Window *win) {
 	float px = win->ecs->position[0].x;
 	float py = win->ecs->position[0].y + 2.0;
@@ -45,32 +72,16 @@ void render_3D(Window *win) {
 	// Render 3d scene here
 	DrawGrid(10, 1.0f);
 	if (win->shred_flag) {
-		shred_map(win->engine->world, &wmesh);
+		shred_sector(win->engine->world, sect_id, &wmesh);
 
-		Mesh mesh = { 0 };
-		mesh.triangleCount = wmesh.triangle_count;
-		mesh.vertexCount = wmesh.triangle_count*3;
-		mesh.vertices = (float *)MemAlloc(1 + mesh.vertexCount*3*sizeof(float));    
-		mesh.texcoords = (float *)MemAlloc(mesh.vertexCount*2*sizeof(float)); 
-		mesh.normals = (float *)MemAlloc(mesh.vertexCount*3*sizeof(float));
-		
-		int vcount = wmesh.triangle_count*9;
-		for(int i = 0; i < vcount; i++) {
-			mesh.vertices[i] = (float) wmesh.vertex_array[i];
-
-		}
-		
-		tex = LoadTexture("res/brick.png");
-		int tcount = wmesh.triangle_count*6;
-
-		for(int j = 0; j < tcount; j++) {
-			mesh.texcoords[j] = (float) wmesh.texture_coord_array[j];
-		}
-
-		UploadMesh(&mesh, true);
+		Mesh mesh = create_mesh(wmesh);
 		model = LoadModelFromMesh(mesh);
+
+		tex = LoadTexture("res/brick.png");
 		model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex;
+	
 		win->shred_flag = 0;
+		sect_id++;
 	} else {
 		DrawModel(model, (Vector3){0.0f, 0.0f, 0.0f}, 1.0f, WHITE);
 	}

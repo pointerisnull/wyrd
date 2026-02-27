@@ -178,26 +178,28 @@ void apply_texture(WyrdMesh *mesh, int j) {
 }
 
 /* returns number of triangles created from sectors */
-int calculate_triangle_count(World *w) {
+int calculate_triangle_count(World *w, int sector) {
 	int total_triangles = 0;
 
 	// Each line makes 2 triangles
-	total_triangles += (w->lc * 2);
+	total_triangles += (w->s[sector].linec * 2);
 
-	// Portals add +2 triangles each
-	total_triangles += (w->pc * 2);
+    // Get portal count, each portal adds 2 triangles
+    int start = w->s[sector].first_line;
+    for (int i = 0; i < w->s[sector].linec; i++) {
+        if (w->l[start+i].is_portal) {
+	        total_triangles += 2;
+        }
+    }
 
 	// Calculate floor and ceiling triangles
-	for (int i = 0; i < w->sc; i++) {
-		int n_lines = w->s[i].linec;
-	
-	  // A valid polygon must have at least 3 sides
-	  if (n_lines >= 3) {
-	  	// (N - 2) triangles per flat. 
-	    // Multiply by 2 because of floor and ceiling.
-	    total_triangles += (n_lines - 2) * 2;
-		}
-	}
+    int n_lines = w->s[sector].linec;
+    // A valid polygon must have at least 3 sides
+    if (n_lines >= 3) {
+	// (N - 2) triangles per flat. 
+    // Multiply by 2 because of floor and ceiling.
+        total_triangles += (n_lines - 2) * 2;
+    }
 
 	return total_triangles;
 }
@@ -377,37 +379,55 @@ void shred_flats(World *w, WyrdMesh *mesh, int *offset, int sector_idx) {
     }
 }
 
-int shred_map(World *world, WyrdMesh *mesh) {
-	int triangle_count = calculate_triangle_count(world);
-  mesh->triangle_count = triangle_count;
-  mesh->vertex_array = malloc(sizeof(float) * mesh->triangle_count * 9);
-  mesh->texture_coord_array = malloc(sizeof(float) * mesh->triangle_count * 6);
+int shred_sector(World *world, int sector_id, WyrdMesh *mesh) {
+    int triangle_count = calculate_triangle_count(world, sector_id);
+    mesh->triangle_count = triangle_count;
+    mesh->vertex_array = malloc(sizeof(float) * mesh->triangle_count * 9);
+    mesh->texture_coord_array = malloc(sizeof(float) * mesh->triangle_count * 6);
 
-  int offset = 0;
-  int uv_offset = 0; 
-
-  for(int i = 0; i < world->lc; i++) {
-    if(world->l[i].is_portal == 1) {
-      shred_portal(world, mesh, offset, i);
-      offset += 36; 
-      
-      apply_texture(mesh, uv_offset);
-      apply_texture(mesh, uv_offset + 12);
-      uv_offset += 24; 
-    } else {
-      shred_wall(world, mesh, offset, i);
-      offset += 18; 
-      
-      apply_texture(mesh, uv_offset);
-      uv_offset += 12; 
+    int offset = 0;
+    int uv_offset = 0; 
+    /*
+    for(int i = 0; i < world->lc; i++) {
+        if(world->l[i].is_portal == 1) {
+            shred_portal(world, mesh, offset, i);
+            offset += 36; 
+        
+            apply_texture(mesh, uv_offset);
+            apply_texture(mesh, uv_offset + 12);
+            uv_offset += 24; 
+        } else {
+            shred_wall(world, mesh, offset, i);
+            offset += 18; 
+        
+            apply_texture(mesh, uv_offset);
+            uv_offset += 12; 
+        }
     }
-  }
 
-  for(int i = 0; i < world->sc; i++) {
-    shred_flats(world, mesh, &offset, i);
-  }
+    for(int i = 0; i < world->sc; i++) {
+        shred_flats(world, mesh, &offset, i);
+    }*/
+    for(int i = world->s[sector_id].first_line; i < world->s[sector_id].linec; i++) {
+        if(world->l[i].is_portal == 1) {
+            shred_portal(world, mesh, offset, i);
+            offset += 36; 
+        
+            apply_texture(mesh, uv_offset);
+            apply_texture(mesh, uv_offset + 12);
+            uv_offset += 24; 
+        } else {
+            shred_wall(world, mesh, offset, i);
+            offset += 18; 
+        
+            apply_texture(mesh, uv_offset);
+            uv_offset += 12; 
+        }
+    }
+    
+    shred_flats(world, mesh, &offset, sector_id);
 
-  mesh->triangle_count = offset / 9;
+    mesh->triangle_count = offset / 9;
   
 	return 0;
 }
