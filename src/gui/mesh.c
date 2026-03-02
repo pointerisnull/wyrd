@@ -85,69 +85,69 @@ void shred_portal(World *w, WyrdMesh *mesh, int offset, int i) {
 		  	mesh->vertex_array[offset+7]	= ceiling;
 	  		mesh->vertex_array[offset+8]	= w->v[w->l[i].head].z;
 	  		/* right triangle */
-	  		mesh->vertex_array[offset+9]  = w->v[w->l[i].tail].x;
-	  		mesh->vertex_array[offset+10] = ceiling;
-	  		mesh->vertex_array[offset+11] = w->v[w->l[i].tail].z;
+	  		mesh->vertex_array[offset+9]	= w->v[w->l[i].tail].x;
+	  		mesh->vertex_array[offset+10] 	= ceiling;
+	  		mesh->vertex_array[offset+11] 	= w->v[w->l[i].tail].z;
 
-  			mesh->vertex_array[offset+12] = w->v[w->l[i].head].x;
-  			mesh->vertex_array[offset+13] = ceiling;
-  			mesh->vertex_array[offset+14] = w->v[w->l[i].head].z;
+  			mesh->vertex_array[offset+12] 	= w->v[w->l[i].head].x;
+  			mesh->vertex_array[offset+13] 	= ceiling;
+  			mesh->vertex_array[offset+14] 	= w->v[w->l[i].head].z;
 	
-	  		mesh->vertex_array[offset+15] = w->v[w->l[i].tail].x;
-			mesh->vertex_array[offset+16] = floor;
-		  	mesh->vertex_array[offset+17] = w->v[w->l[i].tail].z;
+	  		mesh->vertex_array[offset+15] 	= w->v[w->l[i].tail].x;
+			mesh->vertex_array[offset+16] 	= floor;
+		  	mesh->vertex_array[offset+17] 	= w->v[w->l[i].tail].z;
 
       } else {
-	  		mesh->vertex_array[offset]   = w->v[w->l[i].tail].x;
-		  	mesh->vertex_array[offset+1] = floor;
-	  		mesh->vertex_array[offset+2] = w->v[w->l[i].tail].z;
+	  		mesh->vertex_array[offset]		= w->v[w->l[i].tail].x;
+		  	mesh->vertex_array[offset+1] 	= floor;
+	  		mesh->vertex_array[offset+2] 	= w->v[w->l[i].tail].z;
 	
-	  		mesh->vertex_array[offset+3] = w->v[w->l[i].head].x;
-	  		mesh->vertex_array[offset+4] = floor;
-			mesh->vertex_array[offset+5] = w->v[w->l[i].head].z;
+	  		mesh->vertex_array[offset+3] 	= w->v[w->l[i].head].x;
+	  		mesh->vertex_array[offset+4] 	= floor;
+			mesh->vertex_array[offset+5] 	= w->v[w->l[i].head].z;
 	
-		  	mesh->vertex_array[offset+6] = w->v[w->l[i].head].x;
-	  		mesh->vertex_array[offset+7] = ceiling;
-  			mesh->vertex_array[offset+8] = w->v[w->l[i].head].z;
+		  	mesh->vertex_array[offset+6] 	= w->v[w->l[i].head].x;
+	  		mesh->vertex_array[offset+7] 	= ceiling;
+  			mesh->vertex_array[offset+8] 	= w->v[w->l[i].head].z;
 
-  			mesh->vertex_array[offset+9]  = w->v[w->l[i].head].x;
-  			mesh->vertex_array[offset+10] = ceiling;
-  			mesh->vertex_array[offset+11] = w->v[w->l[i].head].z;
+  			mesh->vertex_array[offset+9]	= w->v[w->l[i].head].x;
+  			mesh->vertex_array[offset+10] 	= ceiling;
+  			mesh->vertex_array[offset+11] 	= w->v[w->l[i].head].z;
 
-  			mesh->vertex_array[offset+12] = w->v[w->l[i].tail].x;
-  			mesh->vertex_array[offset+13] = ceiling;
-  			mesh->vertex_array[offset+14] = w->v[w->l[i].tail].z;
+  			mesh->vertex_array[offset+12] 	= w->v[w->l[i].tail].x;
+  			mesh->vertex_array[offset+13] 	= ceiling;
+  			mesh->vertex_array[offset+14] 	= w->v[w->l[i].tail].z;
 	
-			mesh->vertex_array[offset+15] = w->v[w->l[i].tail].x;
-			mesh->vertex_array[offset+16] = floor;
-			mesh->vertex_array[offset+17] = w->v[w->l[i].tail].z;
+			mesh->vertex_array[offset+15] 	= w->v[w->l[i].tail].x;
+			mesh->vertex_array[offset+16] 	= floor;
+			mesh->vertex_array[offset+17] 	= w->v[w->l[i].tail].z;
       }
 
    } else {
     /* junk triangle for now, fix later */
-		mesh->vertex_array[offset]   = 0;
-		mesh->vertex_array[offset+1] = 0;
-	  	mesh->vertex_array[offset+2] = 0;
+		mesh->vertex_array[offset]		= 0;
+		mesh->vertex_array[offset+1] 	= 0;
+	  	mesh->vertex_array[offset+2] 	= 0;
 	
-	  	mesh->vertex_array[offset+3] = 0;
-	  	mesh->vertex_array[offset+4] = 0;
-		mesh->vertex_array[offset+5] = 0;
+	  	mesh->vertex_array[offset+3] 	= 0;
+	  	mesh->vertex_array[offset+4] 	= 0;
+		mesh->vertex_array[offset+5] 	= 0;
 	
-		mesh->vertex_array[offset+6] = 0;
-	  	mesh->vertex_array[offset+7] = 0;
-  		mesh->vertex_array[offset+8] = 0;
+		mesh->vertex_array[offset+6] 	= 0;
+	  	mesh->vertex_array[offset+7] 	= 0;
+  		mesh->vertex_array[offset+8] 	= 0;
 
-  		mesh->vertex_array[offset+9]  = 0;
-  		mesh->vertex_array[offset+10] = 0;
-  		mesh->vertex_array[offset+11] = 0;
+  		mesh->vertex_array[offset+9]	= 0;
+  		mesh->vertex_array[offset+10] 	= 0;
+  		mesh->vertex_array[offset+11] 	= 0;
 
-  		mesh->vertex_array[offset+12] = 0;
-  		mesh->vertex_array[offset+13] = 0;
-  		mesh->vertex_array[offset+14] = 0;
+  		mesh->vertex_array[offset+12] 	= 0;
+  		mesh->vertex_array[offset+13] 	= 0;
+  		mesh->vertex_array[offset+14] 	= 0;
 	
-		mesh->vertex_array[offset+15] = 0;
-		mesh->vertex_array[offset+16] = 0;
-		mesh->vertex_array[offset+17] = 0;
+		mesh->vertex_array[offset+15] 	= 0;
+		mesh->vertex_array[offset+16] 	= 0;
+		mesh->vertex_array[offset+17] 	= 0;
    }
     /* move to ceiling part */ 
     floor = nextCeiling;
@@ -161,17 +161,17 @@ void shred_portal(World *w, WyrdMesh *mesh, int offset, int i) {
  * alternates between each wall's two triangles
  * and flips the coords, hence the offset of 12 (3 verts)*(2 uv coords)*(2 triangles)*/
 void apply_texture(WyrdMesh *mesh, int j) {
-	mesh->texture_coord_array[j] = 0;
-  	mesh->texture_coord_array[j+1] = 1;
-  	mesh->texture_coord_array[j+2] = 1;
-  	mesh->texture_coord_array[j+3] = 1;
-  	mesh->texture_coord_array[j+4] = 0;
-  	mesh->texture_coord_array[j+5] = 0;
+	mesh->texture_coord_array[j]	= 0;
+  	mesh->texture_coord_array[j+1]	= 1;
+  	mesh->texture_coord_array[j+2] 	= 1;
+  	mesh->texture_coord_array[j+3] 	= 1;
+  	mesh->texture_coord_array[j+4] 	= 0;
+  	mesh->texture_coord_array[j+5] 	= 0;
 
-  	mesh->texture_coord_array[j+6] = 1;
-  	mesh->texture_coord_array[j+7] = 0;
-  	mesh->texture_coord_array[j+8] = 0;
-  	mesh->texture_coord_array[j+9] = 0;
+  	mesh->texture_coord_array[j+6]	= 1;
+  	mesh->texture_coord_array[j+7] 	= 0;
+  	mesh->texture_coord_array[j+8] 	= 0;
+  	mesh->texture_coord_array[j+9] 	= 0;
   	mesh->texture_coord_array[j+10] = 1;
   	mesh->texture_coord_array[j+11] = 1;
 
@@ -387,29 +387,11 @@ int shred_sector(World *world, int sector_id, WyrdMesh *mesh) {
 
     int offset = 0;
     int uv_offset = 0; 
-    /*
-    for(int i = 0; i < world->lc; i++) {
-        if(world->l[i].is_portal == 1) {
-            shred_portal(world, mesh, offset, i);
-            offset += 36; 
-        
-            apply_texture(mesh, uv_offset);
-            apply_texture(mesh, uv_offset + 12);
-            uv_offset += 24; 
-        } else {
-            shred_wall(world, mesh, offset, i);
-            offset += 18; 
-        
-            apply_texture(mesh, uv_offset);
-            uv_offset += 12; 
-        }
-    }
-
-    for(int i = 0; i < world->sc; i++) {
-        shred_flats(world, mesh, &offset, i);
-    }*/
-    for(int i = world->s[sector_id].first_line; i < world->s[sector_id].linec; i++) {
-        if(world->l[i].is_portal == 1) {
+    
+	printf("SHREDDING SECTOR %d\n--------------------\n", sector_id);
+    for(int i = world->s[sector_id].first_line; i < world->s[sector_id].first_line+world->s[sector_id].linec; i++) {
+		printf("Attempting wall shred%d\n", sector_id);
+        if(world->l[i].is_portal) {
             shred_portal(world, mesh, offset, i);
             offset += 36; 
         
@@ -425,6 +407,10 @@ int shred_sector(World *world, int sector_id, WyrdMesh *mesh) {
         }
     }
     
+	printf("Mesh triangle count: %d\n", mesh->triangle_count);
+	printf("Offset: %d\n", offset);
+	printf("First Line: %d\n", world->s[sector_id].first_line);
+	printf("Line Count: %d\n\n", world->s[sector_id].linec);
     shred_flats(world, mesh, &offset, sector_id);
 
     mesh->triangle_count = offset / 9;

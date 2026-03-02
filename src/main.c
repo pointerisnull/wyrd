@@ -20,10 +20,10 @@ int main(int argc, char **argv) {
 	engine.world = &world;
 	
 	Window win;
-	init_window(&win, "Wyrd", DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	win.engine = &engine;
 	win.ecs = &engine.ecs;
 	win.em = &event_manager;
+	init_window(&win, "Wyrd", DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
 	Event ev = new_event(E_ENTITY, E_SPAWN);
 	ev.vec = (Vec3){25.0f, 0.0f, 25.0f};

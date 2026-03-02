@@ -15,11 +15,9 @@ void draw_line(float x1, float y1, float x2, float y2, int r, int g, int b) {
 	DrawLine(x1, y1, x2, y2, (Color){r, g, b, 255});
 }
 
-WyrdMesh wmesh;
-Model model = {0};
-Texture2D tex = {0};
-
-int sect_id = 0;
+Model *models; // = {0};
+int modelc;
+Texture2D tex; // = {0};
 
 Mesh create_mesh(WyrdMesh wm) {
 	Mesh mesh = { 0 };
@@ -40,10 +38,23 @@ Mesh create_mesh(WyrdMesh wm) {
 	for(int j = 0; j < tcount; j++) {
 		mesh.texcoords[j] = (float) wm.texture_coord_array[j];
 	}
-
 	UploadMesh(&mesh, true);
 
 	return mesh;
+}
+
+void init_3D(Window *win) {
+	modelc = win->engine->world->sc;
+	models = malloc(sizeof(Model)*modelc);
+	win->shred_flag = 1;
+}
+
+void clear_3D() {
+	for (int i = 0; i < modelc; i++) {
+		UnloadModel(models[i]);
+	}
+	UnloadTexture(tex);
+	free(models);
 }
 
 void render_3D(Window *win) {
@@ -72,18 +83,32 @@ void render_3D(Window *win) {
 	// Render 3d scene here
 	DrawGrid(10, 1.0f);
 	if (win->shred_flag) {
-		shred_sector(win->engine->world, sect_id, &wmesh);
-
-		Mesh mesh = create_mesh(wmesh);
-		model = LoadModelFromMesh(mesh);
-
 		tex = LoadTexture("res/brick.png");
-		model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex;
-	
+		for (int i = 0; i < modelc; i++) {
+			WyrdMesh wmesh;
+			shred_sector(win->engine->world, i, &wmesh);
+			//printf("Mesh triangle count: %d\n", wmesh.triangle_count);
+
+			Mesh mesh = create_mesh(wmesh);
+			models[i] = LoadModelFromMesh(mesh);
+
+			models[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tex;
+
+			free(wmesh.vertex_array);
+			free(wmesh.texture_coord_array);
+		}
+
 		win->shred_flag = 0;
-		sect_id++;
 	} else {
-		DrawModel(model, (Vector3){0.0f, 0.0f, 0.0f}, 1.0f, WHITE);
+		Color color = {0};
+		for (int i = 0; i < modelc; i++) {
+			if (i % 2  == 0)
+				color = (Color){200, 200, 200, 255};
+			else 
+				color = (Color){255, 255, 255, 255};
+				
+			DrawModel(models[i], (Vector3){0.0f, 0.0f, 0.0f}, 1.0f, color);
+		}
 	}
 
 	EndMode3D();

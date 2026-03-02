@@ -33,6 +33,8 @@ bool init_window(Window *win, char *title, int width, int height) {
 	win->jump_event = new_event(E_INPUT, I_JUMP);
 	win->sprint_event = new_event(E_INPUT, I_SPRINT);
 	win->slow_event = new_event(E_INPUT, I_WALK);
+	
+	init_3D(win);
 
 	return true;
 }
@@ -112,5 +114,7 @@ void draw_frame(Window *win) {
 }
 
 void close_window(Window *win) {
+
+	clear_3D();
 	CloseWindow();
 }
